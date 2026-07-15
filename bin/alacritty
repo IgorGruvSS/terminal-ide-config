@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+alacritty_bin="${ALACRITTY_BIN:-/usr/local/bin/alacritty}"
+
+if [ ! -x "$alacritty_bin" ]; then
+  alacritty_bin=/usr/bin/alacritty
+fi
+
+if [ ! -x "$alacritty_bin" ]; then
+  printf 'Alacritty not found. Set ALACRITTY_BIN or install Alacritty.\n' >&2
+  exit 1
+fi
+
+exec "$alacritty_bin" --config-file "$root_dir/alacritty/alacritty.toml" "$@"

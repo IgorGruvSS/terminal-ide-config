@@ -1,0 +1,23 @@
+# Alacritty owns terminal rendering. Tmux owns panes, windows, and sessions.
+
+[general]
+import = ["themes/aura-theme.toml"]
+
+[font]
+size = 10.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
+
+[font.bold]
+family = "JetBrainsMono Nerd Font"
+style = "SemiBold"
+
+[window]
+decorations = "None"
+dynamic_padding = false
+padding = { x = 2, y = 2 }
+
+[scrolling]
+history = 50000
