@@ -6,7 +6,7 @@
 - **tmux:** sessions, windows, panes, navigation, and resize.
 - **Neovim:** editing, LSP, completion, Neo-tree, and Git tools.
 
-No terminal key is remapped to tmux. Use the tmux prefix `Ctrl+B` for its operations.
+Alacritty does not remap keys. The direct shortcuts below are handled by tmux itself.
 
 ## Start and recover
 
@@ -18,6 +18,18 @@ alacritty-tmux work     # named session
 Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux server is alive.
 
 ## tmux
+
+### Direct shortcuts
+
+| Shortcut | Action |
+| --- | --- |
+| `Alt` + arrow | Focus the pane in that direction |
+| `Alt+Shift` + arrow | Create a pane in that direction |
+| `Ctrl+Shift+Left` | Previous tmux window |
+| `Ctrl+Shift+Right` | Next tmux window |
+| `Alt+Z` | Zoom/restore the current pane |
+
+### Prefix fallback
 
 | Keys after `Ctrl+B` | Action |
 | --- | --- |
