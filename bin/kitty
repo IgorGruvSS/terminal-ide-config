@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+kitty_bin="${KITTY_BIN:-$HOME/.local/bin/kitty}"
+
+if [ ! -x "$kitty_bin" ]; then
+  kitty_bin=/usr/bin/kitty
+fi
+
+if [ ! -x "$kitty_bin" ]; then
+  printf 'kitty not found at %s. Set KITTY_BIN or install kitty.\n' "$kitty_bin" >&2
+  exit 1
+fi
+
+exec "$kitty_bin" --config "$root_dir/kitty/kitty.conf" "$@"

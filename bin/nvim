@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+export XDG_CONFIG_HOME="$root_dir"
+export XDG_DATA_HOME="$root_dir/.local/share"
+export XDG_STATE_HOME="$root_dir/.local/state"
+export XDG_CACHE_HOME="$root_dir/.cache"
+
+exec /usr/bin/nvim "$@"

@@ -1,0 +1,8 @@
+# Runtime state and downloaded Neovim plugins.
+.cache/
+.local/
+.state/
+kitty/sessions/last.conf
+
+# Local backups are not part of the portable setup.
+kitty/kitty.conf.bak

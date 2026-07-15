@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+session="${1:-main}"
+
+if [ -n "${KITTY_WINDOW_ID:-}" ]; then
+  exec "$root_dir/bin/tmux" new-session -A -s "$session"
+fi
+
+exec "$root_dir/bin/kitty" --title "tmux:$session" "$root_dir/bin/tmux" new-session -A -s "$session"

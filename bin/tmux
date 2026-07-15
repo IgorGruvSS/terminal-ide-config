@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+export TERMINAL_IDE_CONFIG_DIR="$root_dir"
+
+exec /usr/bin/tmux -f "$root_dir/tmux.conf" "$@"
