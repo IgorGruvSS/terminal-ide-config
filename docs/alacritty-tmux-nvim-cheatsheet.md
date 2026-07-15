@@ -25,6 +25,7 @@ Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux s
 | --- | --- |
 | `Alt` + arrow | Focus the pane in that direction |
 | `Alt+Shift` + arrow | Create a pane in that direction |
+| `Ctrl+Alt` + arrow | Resize the pane in that direction |
 | `Ctrl+Shift+Left` | Previous tmux window |
 | `Ctrl+Shift+Right` | Next tmux window |
 | `Alt+Z` | Zoom/restore the current pane |
