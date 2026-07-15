@@ -37,8 +37,12 @@ Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux s
 | `h j k l` | Focus pane |
 | `H J K L` | Resize pane |
 | `z` | Zoom/restore pane |
+| `x` | Close the current pane (asks for confirmation) |
 | `c` | New window |
 | `n` / `p` | Next / previous window |
+| `,` | Rename the current window |
+| `&` | Close the current window (asks for confirmation) |
+| `$` | Rename the current session |
 | `r` | Reload tmux configuration |
 
 ## Neovim
