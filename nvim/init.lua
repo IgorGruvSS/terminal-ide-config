@@ -13,6 +13,8 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 vim.opt.termguicolors = true
+vim.opt.autoread = true
+vim.opt.updatetime = 1000
 vim.opt.list = true
 vim.opt.listchars = {
 	tab = "» ",
@@ -43,6 +45,52 @@ apply_custom_highlights()
 
 vim.api.nvim_create_autocmd("ColorScheme", {
 	callback = apply_custom_highlights,
+})
+
+local external_changes_group = vim.api.nvim_create_augroup("external_file_changes", { clear = true })
+
+local function check_external_changes()
+	if vim.fn.mode() == "c" or vim.fn.getcmdwintype() ~= "" then
+		return
+	end
+
+	vim.cmd.checktime()
+end
+
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+	group = external_changes_group,
+	callback = check_external_changes,
+	desc = "Check for files changed outside Neovim",
+})
+
+vim.api.nvim_create_autocmd("FileChangedShell", {
+	group = external_changes_group,
+	callback = function(args)
+		vim.v.fcs_choice = "ask"
+
+		if vim.v.fcs_reason == "conflict" then
+			local file = vim.fn.fnamemodify(args.file, ":~:.")
+			vim.notify(
+				"CONFLITO: o arquivo mudou no disco e este buffer possui alterações locais\n" .. file,
+				vim.log.levels.ERROR,
+				{ title = "Alteração externa" }
+			)
+		end
+	end,
+	desc = "Warn before resolving an external file conflict",
+})
+
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+	group = external_changes_group,
+	callback = function(args)
+		if vim.v.fcs_reason == "changed" then
+			local file = vim.fn.fnamemodify(args.file, ":~:.")
+			vim.notify("Arquivo atualizado externamente\n" .. file, vim.log.levels.INFO, {
+				title = "Alteração externa",
+			})
+		end
+	end,
+	desc = "Notify after reloading an externally changed file",
 })
 
 vim.keymap.set("n", "<Esc>", "<cmd>noh<CR>")

@@ -65,5 +65,9 @@ Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux s
 | `Space as` | Toggle auto-save (disabled at startup) |
 | `Ctrl+Space` | Open completion |
 
+Files changed by external editors or agents are checked automatically. Clean
+buffers reload with a notification; buffers with local changes show a conflict
+warning instead of being overwritten.
+
 For the plugin inventory, workflows, theme variants, and contextual controls,
 read the [complete Neovim guide](neovim-guide.md).

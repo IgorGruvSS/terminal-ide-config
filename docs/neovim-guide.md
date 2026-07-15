@@ -181,6 +181,17 @@ customizados nesta configuração.
 O auto-save começa **desativado**. Quando ativado, salva depois de 1,5 segundo
 sem alterações e também ao sair do buffer, perder o foco ou encerrar o editor.
 
+Alterações feitas fora do Neovim são verificadas automaticamente ao voltar ao
+editor, entrar em um buffer ou deixar o editor ocioso por aproximadamente um
+segundo:
+
+- se o buffer estiver limpo, o arquivo é recarregado e uma notificação informa
+  qual arquivo mudou;
+- se o buffer também possuir alterações locais, nada é sobrescrito: o Neovim
+  mostra um alerta de conflito e pergunta qual versão deve ser mantida;
+- `:checktime` continua disponível como verificação manual, mas não deve ser
+  necessário no fluxo normal.
+
 O Conform tenta formatar automaticamente a cada salvamento:
 
 | Arquivos | Formatadores |
