@@ -52,8 +52,18 @@ Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux s
 | --- | --- |
 | `Space e` | Toggle Neo-tree |
 | `Space o` | Focus Neo-tree |
+| `Space ff` | Find files |
+| `Space fg` | Find text in the project |
+| `Space fb` | Find open buffers |
+| `Space fk` | Search registered keymaps |
 | `Space w` | Save |
 | `Space q` | Close current window |
 | `Space do` | Open working-tree diff |
+| `Space df` | Open branch diff against `origin/develop` |
+| `Space dh` | Open current file history |
 | `Space dc` | Close diff view |
+| `Space as` | Toggle auto-save (disabled at startup) |
 | `Ctrl+Space` | Open completion |
+
+For the plugin inventory, workflows, theme variants, and contextual controls,
+read the [complete Neovim guide](neovim-guide.md).

@@ -62,3 +62,5 @@ nvim '+Lazy sync'
 Edit files in this repository, then commit the change. Press `Ctrl+B`, then `r` inside tmux to reload its configuration.
 
 For the active workflow and keymap, read [the cheatsheet](docs/alacritty-tmux-nvim-cheatsheet.md).
+For Neovim's plugins, themes, use cases, and contextual shortcuts, read the
+[complete Neovim guide](docs/neovim-guide.md).
