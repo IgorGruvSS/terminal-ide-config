@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Application
+TryExec=@TERMINAL_IDE_CONFIG_DIR@/bin/alacritty
+Exec=@TERMINAL_IDE_CONFIG_DIR@/bin/alacritty
+Icon=Alacritty
+Terminal=false
+Categories=System;TerminalEmulator;
+
+Name=Alacritty
+GenericName=Terminal
+Comment=Alacritty with the terminal-ide-config setup
+StartupNotify=true
+StartupWMClass=Alacritty
+Actions=New;
+
+[Desktop Action New]
+Name=New Terminal
+Exec=@TERMINAL_IDE_CONFIG_DIR@/bin/alacritty

@@ -38,6 +38,9 @@ alacritty-tmux
 ```
 
 The installer only prepends this repository's `bin/` directory to `PATH`. It does not create symlinks or copy configuration into `~/.config`.
+It also installs a user-level KDE desktop entry that starts Alacritty through
+the repository launcher, ensuring the same configuration is used from both the
+application menu and the shell.
 
 On first Neovim launch, install the locked plugins:
 
