@@ -4,7 +4,12 @@ return {
     lazy = false,
     build = ":TSUpdate",
 
-    config = function()
+    config = function(plugin)
+      -- The rewritten nvim-treesitter keeps its queries under runtime/.
+      -- Load them from the plugin inside this repository instead of relying on
+      -- generated query symlinks that break when the repository is moved.
+      vim.opt.rtp:prepend(plugin.dir .. "/runtime")
+
       local languages = {
         "bash",
         "css",
