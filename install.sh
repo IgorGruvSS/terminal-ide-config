@@ -14,8 +14,9 @@ lazygit_dir="$root_dir/.local/bin"
 lazygit_bin="$lazygit_dir/lazygit"
 
 if ! command -v alacritty >/dev/null || ! command -v tmux >/dev/null || ! command -v nvim >/dev/null \
-  || ! command -v curl >/dev/null || ! command -v sha256sum >/dev/null || ! command -v tar >/dev/null; then
-  printf 'Install the prerequisites first: sudo dnf install alacritty tmux neovim git curl coreutils\n' >&2
+  || ! command -v curl >/dev/null || ! command -v fc-list >/dev/null \
+  || ! command -v sha256sum >/dev/null || ! command -v tar >/dev/null; then
+  printf 'Install the prerequisites first: sudo dnf install alacritty tmux neovim git curl coreutils fontconfig\n' >&2
   exit 1
 fi
 

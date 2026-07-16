@@ -2,6 +2,7 @@
 
 [general]
 import = ["themes/aura-theme.toml"]
+ipc_socket = true
 
 [font]
 size = 10.0

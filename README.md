@@ -63,6 +63,7 @@ O processo completo, incluindo dependências e primeira inicialização, está n
 | `tmux` | Usar o tmux com a configuração do repositório |
 | `nvim` | Usar o Neovim e seu estado autocontido |
 | `lazygit` | Usar o LazyGit gerenciado pelo repositório |
+| `font <família>` | Testar temporariamente uma fonte com autocomplete no zsh |
 
 ## Documentação
 

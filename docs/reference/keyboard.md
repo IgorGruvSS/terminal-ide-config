@@ -3,6 +3,7 @@
 ## Índice
 
 - [Shift+Enter](#shiftenter)
+- [Trocar a fonte](#trocar-a-fonte)
 - [Como a tecla atravessa as camadas](#como-a-tecla-atravessa-as-camadas)
 - [Recarregar](#recarregar)
 - [Diagnóstico](#diagnóstico)
@@ -14,6 +15,27 @@
 - no ChatGPT/Codex e em TUIs compatíveis, cria uma nova linha no campo;
 - no zsh interativo, insere uma quebra literal no comando atual;
 - `Enter` continua enviando a mensagem ou executando o comando.
+
+## Trocar a fonte
+
+Digite `font ` e pressione `Tab` para completar as fontes monoespaçadas
+instaladas:
+
+```bash
+font JetBrainsMono\ Nerd\ Font\ Mono
+font Source\ Code\ Pro
+```
+
+A troca afeta temporariamente apenas a janela atual do Alacritty.
+
+| Comando | Ação |
+| --- | --- |
+| `font current` | Mostrar a fonte usada pela janela |
+| `font list` | Listar fontes disponíveis |
+| `font reset` | Restaurar a configuração de `alacritty.toml` |
+
+Para tornar uma escolha permanente, use o nome exibido pelo comando no campo
+`font.normal.family` de `alacritty/alacritty.toml`.
 
 ## Como a tecla atravessa as camadas
 
