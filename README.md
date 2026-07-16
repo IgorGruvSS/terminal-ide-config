@@ -64,6 +64,7 @@ O processo completo, incluindo dependências e primeira inicialização, está n
 | `nvim` | Usar o Neovim e seu estado autocontido |
 | `lazygit` | Usar o LazyGit gerenciado pelo repositório |
 | `font <família>` | Testar temporariamente uma fonte com autocomplete no zsh |
+| `font save` | Salvar a fonte atual como padrão |
 
 ## Documentação
 

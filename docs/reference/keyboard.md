@@ -32,10 +32,11 @@ A troca afeta temporariamente apenas a janela atual do Alacritty.
 | --- | --- |
 | `font current` | Mostrar a fonte usada pela janela |
 | `font list` | Listar fontes disponíveis |
+| `font save` | Salvar a fonte atual como padrão |
 | `font reset` | Restaurar a configuração de `alacritty.toml` |
 
-Para tornar uma escolha permanente, use o nome exibido pelo comando no campo
-`font.normal.family` de `alacritty/alacritty.toml`.
+Depois de testar uma fonte, execute `font save`. O comando grava a família
+atual em `alacritty/alacritty.toml`; novas janelas passam a usá-la por padrão.
 
 ## Como a tecla atravessa as camadas
 

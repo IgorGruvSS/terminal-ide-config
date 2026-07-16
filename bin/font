@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+config_file="$root_dir/alacritty/alacritty.toml"
+
 list_fonts() {
   fc-list :spacing=100 --format '%{family[0]}\n' | sort -fu
 }
@@ -11,6 +14,7 @@ Usage:
   font <font family>  Preview a monospaced font in the current Alacritty window
   font list           List the font families available for completion
   font current        Show the font used by the current Alacritty window
+  font save           Save the current font as the default
   font reset          Return to the font configured in alacritty.toml
 EOF
 }
@@ -18,6 +22,50 @@ EOF
 current_font() {
   alacritty msg get-config |
     sed -n 's/.*"font":{.*"normal":{"family":"\([^"]*\)".*/\1/p'
+}
+
+save_font() {
+  local family toml_family temp_file
+
+  family="$(current_font)"
+  if [ -z "$family" ]; then
+    printf 'Could not read the current Alacritty font.\n' >&2
+    exit 1
+  fi
+
+  toml_family="${family//\\/\\\\}"
+  toml_family="${toml_family//\"/\\\"}"
+  temp_file="$(mktemp "$config_file.tmp.XXXXXX")"
+
+  if ! awk -v family="$toml_family" '
+    /^\[/ {
+      in_font_style = ($0 ~ /^\[font\.(normal|bold|italic|bold_italic)\]$/)
+    }
+
+    in_font_style && /^[[:space:]]*family[[:space:]]*=/ {
+      print "family = \"" family "\""
+      updated = 1
+      next
+    }
+
+    { print }
+
+    END {
+      if (!updated) {
+        exit 1
+      }
+    }
+  ' "$config_file" > "$temp_file"; then
+    rm -f "$temp_file"
+    printf 'Could not update font families in %s.\n' "$config_file" >&2
+    exit 1
+  fi
+
+  chmod --reference="$config_file" "$temp_file"
+  mv "$temp_file" "$config_file"
+
+  printf 'Default font saved: %s\n' "$family"
+  printf 'New Alacritty windows will use this font.\n'
 }
 
 select_font() {
@@ -61,6 +109,9 @@ case "${1-}" in
     ;;
   current | --current)
     current_font
+    ;;
+  save | --save)
+    save_font
     ;;
   reset | --reset)
     alacritty msg config --reset

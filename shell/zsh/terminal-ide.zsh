@@ -16,6 +16,7 @@ _terminal_ide_font() {
   actions=(
     'current:mostrar a fonte da janela atual'
     'list:listar as fontes monoespaçadas disponíveis'
+    'save:salvar a fonte atual como padrão'
     'reset:restaurar a fonte configurada no repositório'
   )
   families=("${(@f)$(font list 2>/dev/null)}")
