@@ -5,6 +5,8 @@ root_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 zshrc="$HOME/.zshrc"
 marker='# terminal-ide-config PATH'
 path_line="export PATH=\"$root_dir/bin:\$PATH\""
+shell_marker='# terminal-ide-config shell integration'
+shell_line="source \"$root_dir/shell/zsh/terminal-ide.zsh\""
 desktop_dir="$HOME/.local/share/applications"
 desktop_file="$desktop_dir/Alacritty.desktop"
 lazygit_version="0.62.0"
@@ -64,6 +66,13 @@ if ! grep -Fqx "$path_line" "$zshrc" 2>/dev/null; then
   } >> "$zshrc"
 fi
 
+if ! grep -Fqx "$shell_line" "$zshrc" 2>/dev/null; then
+  {
+    printf '\n%s\n' "$shell_marker"
+    printf '%s\n' "$shell_line"
+  } >> "$zshrc"
+fi
+
 mkdir -p "$desktop_dir"
 sed "s|@TERMINAL_IDE_CONFIG_DIR@|$root_dir|g" \
   "$root_dir/desktop/Alacritty.desktop.in" > "$desktop_file"
@@ -73,6 +82,7 @@ if command -v update-desktop-database >/dev/null; then
 fi
 
 printf 'Open a new zsh session, then run: alacritty-tmux\n'
+printf 'Shift+Enter inserts a newline in supported TUIs and interactive zsh.\n'
 printf 'The KDE application entry now uses this repository configuration.\n'
 printf 'LazyGit %s is available through: lazygit\n' "$lazygit_version"
 printf 'For Neovim plugins, run: nvim "+Lazy sync"\n'

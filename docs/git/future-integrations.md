@@ -4,6 +4,12 @@ Este documento registra as ferramentas avaliadas para depois do período de uso
 do LazyGit. A regra é adicionar uma ferramenta apenas quando surgir uma lacuna
 concreta, evitando interfaces duplicadas e atalhos desnecessários.
 
+## Índice
+
+- [Base atual](#base-atual)
+- [Candidatos](#candidatos)
+- [Ordem sugerida de avaliação](#ordem-sugerida-de-avaliação)
+
 ## Base atual
 
 | Ferramenta | Responsabilidade |

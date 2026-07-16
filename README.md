@@ -1,34 +1,46 @@
 # Terminal IDE config
 
-Portable, single-directory configuration for a terminal workflow based on **Alacritty**, **tmux**, and **Neovim**.
+Configuração portátil e autocontida para um ambiente terminal-first baseado em
+Alacritty, tmux, Neovim e LazyGit. Não há symlinks de configuração: os arquivos
+canônicos, launchers, documentação e estado local ficam neste repositório.
 
-All configuration, launchers, documentation, and local runtime state live in this repository. It intentionally does not use symbolic links.
+## Índice
 
-## What each layer does
+- [Responsabilidades](#responsabilidades)
+- [Estrutura](#estrutura)
+- [Instalação rápida](#instalação-rápida)
+- [Comandos](#comandos)
+- [Documentação](#documentação)
+- [Atualização](#atualização)
 
-```text
-Alacritty → terminal window, rendering, and theme
-tmux      → persistent sessions, windows, and panes
-nvim      → editing, LSP, completion, and file tree
-LazyGit   → status, diff, stage, commit, branches, rebase, and remotes
-```
-
-`alacritty-tmux` is the usual entry point. It opens Alacritty with this repository's configuration and attaches to a persistent tmux session.
-
-## Layout
+## Responsabilidades
 
 ```text
-alacritty/ Alacritty configuration and the official Aura theme
-bin/       portable launchers for Alacritty, tmux, Neovim, and LazyGit
-lazygit/   versioned LazyGit configuration
-nvim/      Neovim configuration and plugin lockfile
-tmux.conf  tmux configuration
-docs/      workflow guides, studies, and the complete keymap cheatsheet
+Alacritty → janela, renderização, teclado e tema
+tmux      → sessões persistentes, windows e panes
+Neovim    → edição, LSP, completion, navegação e ferramentas Git
+LazyGit   → status, diff, stage, commit, branches, rebase e remotes
 ```
 
-Runtime state and downloaded Neovim plugins are created under `.local/`, `.cache/`, and `.state/`; they stay inside the repository directory but are deliberately not versioned.
+`alacritty-tmux` é o ponto de entrada diário. Ele abre o Alacritty com a
+configuração deste repositório e conecta a uma sessão persistente do tmux.
 
-## Fedora installation
+## Estrutura
+
+```text
+alacritty/  configuração do Alacritty e tema Aura
+bin/        launchers portáteis
+docs/       documentação organizada por contexto
+lazygit/    configuração versionada do LazyGit
+nvim/       configuração, plugins e lockfile do Neovim
+shell/      integrações versionadas com o shell
+tmux.conf   configuração do tmux
+```
+
+Plugins e estado de execução são mantidos em `.local/`, `.cache/` e `.state/`.
+Esses diretórios permanecem dentro do repositório, mas não são versionados.
+
+## Instalação rápida
 
 ```bash
 sudo dnf install alacritty tmux neovim git
@@ -39,34 +51,29 @@ exec zsh
 alacritty-tmux
 ```
 
-The installer only prepends this repository's `bin/` directory to `PATH`. It does not create symlinks or copy configuration into `~/.config`.
-It also installs a user-level KDE desktop entry that starts Alacritty through
-the repository launcher, ensuring the same configuration is used from both the
-application menu and the shell.
+O processo completo, incluindo dependências e primeira inicialização, está no
+[guia de instalação](docs/getting-started/installation.md).
 
-On first Neovim launch, install the locked plugins:
+## Comandos
 
-```bash
-nvim '+Lazy sync'
-```
-
-## Commands
-
-| Command | Purpose |
+| Comando | Finalidade |
 | --- | --- |
-| `alacritty-tmux [session]` | Open Alacritty and attach/create a tmux session (default: `main`) |
-| `alacritty` | Run Alacritty with this repository's configuration |
-| `tmux` | Run tmux with this repository's configuration |
-| `nvim` | Run Neovim with configuration, plugins, cache, and state contained here |
-| `lazygit` | Run the repository-managed LazyGit with its versioned configuration |
+| `alacritty-tmux [sessão]` | Abrir o Alacritty e conectar/criar uma sessão tmux |
+| `alacritty` | Usar o Alacritty com a configuração do repositório |
+| `tmux` | Usar o tmux com a configuração do repositório |
+| `nvim` | Usar o Neovim e seu estado autocontido |
+| `lazygit` | Usar o LazyGit gerenciado pelo repositório |
 
-## Updating and troubleshooting
+## Documentação
 
-Edit files in this repository, then commit the change. Press `Ctrl+B`, then `r` inside tmux to reload its configuration.
+O [índice geral da documentação](docs/README.md) organiza o conteúdo por
+instalação, fluxo diário, Neovim e Git. Para uma consulta rápida, abra o
+[cheatsheet diário](docs/reference/cheatsheet.md).
 
-For the active workflow and keymap, read [the cheatsheet](docs/alacritty-tmux-nvim-cheatsheet.md).
-For Neovim's plugins, themes, use cases, and contextual shortcuts, read the
-[complete Neovim guide](docs/neovim-guide.md).
-For the daily Git workflow, read the [LazyGit guide](docs/lazygit-guide.md).
-The tools considered for later adoption are recorded in the
-[Git and GitHub integration study](docs/git-github-integration-study.md).
+## Atualização
+
+Edite os arquivos neste repositório e versione as mudanças normalmente.
+
+- recarregar tmux: `Ctrl+B`, depois `r`;
+- recarregar a integração do zsh: `source shell/zsh/terminal-ide.zsh`;
+- sincronizar plugins do Neovim: `nvim '+Lazy sync'`.

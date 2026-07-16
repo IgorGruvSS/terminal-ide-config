@@ -6,6 +6,13 @@ versionada neste repositório.
 
 Referência oficial: [jesseduffield/lazygit](https://github.com/jesseduffield/lazygit).
 
+## Índice
+
+- [Abrir](#abrir)
+- [Modelo de navegação](#modelo-de-navegação)
+- [Fluxo diário](#fluxo-diário)
+- [Comandos ainda disponíveis](#comandos-ainda-disponíveis)
+
 ## Abrir
 
 | Contexto | Comando |

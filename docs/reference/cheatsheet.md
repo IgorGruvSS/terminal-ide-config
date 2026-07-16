@@ -1,12 +1,22 @@
 # Alacritty + tmux + Neovim
 
+## Índice
+
+- [Responsabilidades](#responsibilities)
+- [Iniciar e recuperar](#start-and-recover)
+- [Atalhos do terminal](#terminal)
+- [tmux](#tmux)
+- [Neovim](#neovim)
+- [LazyGit](#lazygit)
+
 ## Responsibilities
 
 - **Alacritty:** window, font, scrollback, and the official Aura theme.
 - **tmux:** sessions, windows, panes, navigation, and resize.
 - **Neovim:** editing, LSP, completion, Neo-tree, and Git tools.
 
-Alacritty does not remap keys. The direct shortcuts below are handled by tmux itself.
+Alacritty owns the `Shift+Enter` translation. The pane and window shortcuts are
+handled by tmux itself.
 
 ## Start and recover
 
@@ -16,6 +26,15 @@ alacritty-tmux work     # named session
 ```
 
 Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux server is alive.
+
+## Terminal
+
+| Shortcut | Action |
+| --- | --- |
+| `Shift+Enter` | Insert a newline without submitting in supported TUIs and zsh |
+| `Enter` | Submit the message or execute the command |
+
+See the [keyboard guide](keyboard.md) for the complete routing and diagnosis.
 
 ## tmux
 
@@ -71,7 +90,7 @@ buffers reload with a notification; buffers with local changes show a conflict
 warning instead of being overwritten.
 
 For the plugin inventory, workflows, theme variants, and contextual controls,
-read the [complete Neovim guide](neovim-guide.md).
+read the [Neovim documentation index](../neovim/README.md).
 
 ## LazyGit
 
@@ -89,5 +108,5 @@ Open it with `Space gg` inside Neovim or run `lazygit` inside a repository.
 | `?` | Show contextual shortcuts |
 | `q` | Close LazyGit |
 
-Read the [LazyGit guide](lazygit-guide.md) for stage by hunk, log, branches,
+Read the [LazyGit guide](../git/lazygit.md) for stage by hunk, log, branches,
 rebase and safety notes.

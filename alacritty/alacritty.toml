@@ -21,3 +21,8 @@ padding = { x = 2, y = 2 }
 
 [scrolling]
 history = 50000
+
+[[keyboard.bindings]]
+key = "Enter"
+mods = "Shift"
+chars = "\u001b[13;2u"
