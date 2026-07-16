@@ -58,6 +58,7 @@ Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux s
 | `Space fk` | Search registered keymaps |
 | `Space w` | Save |
 | `Space q` | Close current window |
+| `Space gg` | Open LazyGit at the current file's Git root |
 | `Space do` | Open working-tree diff |
 | `Space df` | Open branch diff against `origin/develop` |
 | `Space dh` | Open current file history |
@@ -71,3 +72,22 @@ warning instead of being overwritten.
 
 For the plugin inventory, workflows, theme variants, and contextual controls,
 read the [complete Neovim guide](neovim-guide.md).
+
+## LazyGit
+
+Open it with `Space gg` inside Neovim or run `lazygit` inside a repository.
+
+| Shortcut | Action |
+| --- | --- |
+| `h j k l` / arrows | Navigate panels and items |
+| `1` / `2` / `3` / `4` / `5` | Status / files / branches / commits / stash |
+| `Space` | Stage/unstage or select the contextual item |
+| `Enter` | Open the selected item or diff |
+| `c` in files | Commit staged changes |
+| `p` / `P` | Pull / push |
+| `f` in remotes | Fetch |
+| `?` | Show contextual shortcuts |
+| `q` | Close LazyGit |
+
+Read the [LazyGit guide](lazygit-guide.md) for stage by hunk, log, branches,
+rebase and safety notes.

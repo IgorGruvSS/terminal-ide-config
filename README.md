@@ -9,7 +9,8 @@ All configuration, launchers, documentation, and local runtime state live in thi
 ```text
 Alacritty → terminal window, rendering, and theme
 tmux      → persistent sessions, windows, and panes
-nvim      → editing, LSP, completion, file tree, and Git tools
+nvim      → editing, LSP, completion, and file tree
+LazyGit   → status, diff, stage, commit, branches, rebase, and remotes
 ```
 
 `alacritty-tmux` is the usual entry point. It opens Alacritty with this repository's configuration and attaches to a persistent tmux session.
@@ -18,10 +19,11 @@ nvim      → editing, LSP, completion, file tree, and Git tools
 
 ```text
 alacritty/ Alacritty configuration and the official Aura theme
-bin/       portable launchers for Alacritty, tmux, and Neovim
+bin/       portable launchers for Alacritty, tmux, Neovim, and LazyGit
+lazygit/   versioned LazyGit configuration
 nvim/      Neovim configuration and plugin lockfile
 tmux.conf  tmux configuration
-docs/      workflow guides and the complete keymap cheatsheet
+docs/      workflow guides, studies, and the complete keymap cheatsheet
 ```
 
 Runtime state and downloaded Neovim plugins are created under `.local/`, `.cache/`, and `.state/`; they stay inside the repository directory but are deliberately not versioned.
@@ -56,6 +58,7 @@ nvim '+Lazy sync'
 | `alacritty` | Run Alacritty with this repository's configuration |
 | `tmux` | Run tmux with this repository's configuration |
 | `nvim` | Run Neovim with configuration, plugins, cache, and state contained here |
+| `lazygit` | Run the repository-managed LazyGit with its versioned configuration |
 
 ## Updating and troubleshooting
 
@@ -64,3 +67,6 @@ Edit files in this repository, then commit the change. Press `Ctrl+B`, then `r` 
 For the active workflow and keymap, read [the cheatsheet](docs/alacritty-tmux-nvim-cheatsheet.md).
 For Neovim's plugins, themes, use cases, and contextual shortcuts, read the
 [complete Neovim guide](docs/neovim-guide.md).
+For the daily Git workflow, read the [LazyGit guide](docs/lazygit-guide.md).
+The tools considered for later adoption are recorded in the
+[Git and GitHub integration study](docs/git-github-integration-study.md).

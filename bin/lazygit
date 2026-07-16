@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+lazygit_bin="$root_dir/.local/bin/lazygit"
+
+if [ ! -x "$lazygit_bin" ]; then
+  printf 'LazyGit is not installed. Run: %s/install.sh\n' "$root_dir" >&2
+  exit 1
+fi
+
+export XDG_CONFIG_HOME="$root_dir/.local/config"
+export XDG_DATA_HOME="$root_dir/.local/share"
+export XDG_STATE_HOME="$root_dir/.local/state"
+export XDG_CACHE_HOME="$root_dir/.cache"
+
+exec "$lazygit_bin" --use-config-file="$root_dir/lazygit/config.yml" "$@"

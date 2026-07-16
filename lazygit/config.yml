@@ -1,0 +1,43 @@
+gui:
+  language: pt
+  nerdFontsVersion: "3"
+  showFileTree: true
+  showCommandLog: false
+  showBottomLine: true
+  showPanelJumps: true
+  theme:
+    activeBorderColor:
+      - "#a277ff"
+      - bold
+    inactiveBorderColor:
+      - "#6d6d6d"
+    searchingActiveBorderColor:
+      - "#61ffca"
+      - bold
+    optionsTextColor:
+      - "#61ffca"
+    selectedLineBgColor:
+      - "#29263c"
+    selectedRangeBgColor:
+      - "#29263c"
+    cherryPickedCommitBgColor:
+      - "#29263c"
+    cherryPickedCommitFgColor:
+      - "#f694ff"
+    unstagedChangesColor:
+      - "#ff6767"
+git:
+  branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=oneline {{branchName}} --
+  allBranchesLogCmds:
+    - git log --graph --all --color=always --abbrev-commit --decorate --date=relative --pretty=oneline
+os:
+  editPreset: nvim-remote
+
+keybinding:
+  universal:
+    confirmInEditor:
+      - <ctrl+enter>
+      - <ctrl+s>
+
+disableStartupPopups: true
+notARepository: quit

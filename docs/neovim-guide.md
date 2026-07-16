@@ -13,6 +13,7 @@ depois pressionar `f` duas vezes.
 | Abrir o gerenciador de plugins | `:Lazy` |
 | Ver os atalhos do painel atual do Neo-tree | `?` dentro do Neo-tree |
 | Ver os atalhos da tela atual do Diffview | `g?` dentro do Diffview |
+| Ver os atalhos do painel atual do LazyGit | `?` dentro do LazyGit |
 | Ver os atalhos de um seletor Telescope | `Ctrl+/` no seletor |
 | Inspecionar LSPs ativos | `:checkhealth vim.lsp` |
 | Diagnosticar formatadores | `:ConformInfo` |
@@ -169,6 +170,18 @@ O plugin Gitsigns complementa esse fluxo mostrando na coluna lateral quais
 linhas foram adicionadas, alteradas ou removidas. Ele não possui atalhos
 customizados nesta configuração.
 
+### Operar Git com LazyGit
+
+Use `Space gg` para abrir o LazyGit em uma janela flutuante, automaticamente na
+raiz Git do arquivo atual. A interface cobre status, diff, stage, commit, log,
+branches, rebase, stash, fetch, pull e push. Pressione `q` para fechá-la e
+voltar exatamente ao buffer anterior.
+
+O LazyGit usa painéis e atalhos contextuais inspirados no Vim, mas não possui os
+modos Normal, Insert e Visual. Pressione `?` em qualquer painel para ver as
+ações disponíveis naquele momento. O fluxo completo está no
+[guia do LazyGit](lazygit-guide.md).
+
 ### Salvar e formatar
 
 | Atalho ou comportamento | Ação |
@@ -251,6 +264,7 @@ cada troca de tema.
 | `nvim-lspconfig` | Configura servidores de linguagem | `gd`, `gr`, `K`, `Space r...`, diagnósticos |
 | `nvim-cmp` | Menu de autocompletar | `Ctrl+Space`, `Tab`, `Enter` |
 | `diffview.nvim` | Diff, histórico e stage visual do Git | `Space d...` |
+| `lazygit.nvim` | Abre o executável LazyGit em uma janela flutuante | `Space gg` |
 | `auto-save.nvim` | Salvamento automático com debounce | `Space as`; desativado ao iniciar |
 | `conform.nvim` | Formatação automática ao salvar | Automático; `:ConformInfo` para diagnóstico |
 | `render-markdown.nvim` | Renderização enriquecida de Markdown | Automático em Markdown; `:RenderMarkdown ...` |
@@ -273,7 +287,7 @@ cada troca de tema.
 | Plugin | Consumidor / função |
 | --- | --- |
 | `lazy.nvim` | Instala, carrega e atualiza todos os plugins; interface em `:Lazy` |
-| `plenary.nvim` | Biblioteca usada por Telescope, Neo-tree e Diffview |
+| `plenary.nvim` | Biblioteca usada por Telescope, Neo-tree, Diffview e LazyGit |
 | `nui.nvim` | Componentes de interface usados pelo Neo-tree |
 | `telescope-fzf-native.nvim` | Ordenação nativa mais rápida para o Telescope |
 | `cmp-nvim-lsp` | Sugestões do LSP no nvim-cmp |
