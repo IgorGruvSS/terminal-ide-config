@@ -2,6 +2,7 @@
 set -euo pipefail
 
 root_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+os_release="/etc/os-release"
 zshrc="$HOME/.zshrc"
 marker='# terminal-ide-config PATH'
 path_line="export PATH=\"$root_dir/bin:\$PATH\""
@@ -12,13 +13,173 @@ desktop_file="$desktop_dir/Alacritty.desktop"
 lazygit_version="0.62.0"
 lazygit_dir="$root_dir/.local/bin"
 lazygit_bin="$lazygit_dir/lazygit"
+nvim_version="0.11.3"
+nvim_min_version="0.11.0"
+nvim_dir="$root_dir/.local/opt/nvim-$nvim_version"
+nvim_bin="$root_dir/.local/bin/nvim"
+nerd_font_version="3.4.0"
+font_checksum="76f05ff3ace48a464a6ca57977998784ff7bdbb65a6d915d7e401cd3927c493c"
+font_family="JetBrainsMono Nerd Font"
+font_dir="$HOME/.local/share/fonts/terminal-ide-config"
+skip_system_packages=false
 
-if ! command -v alacritty >/dev/null || ! command -v tmux >/dev/null || ! command -v nvim >/dev/null \
-  || ! command -v curl >/dev/null || ! command -v fc-list >/dev/null \
-  || ! command -v sha256sum >/dev/null || ! command -v tar >/dev/null; then
-  printf 'Install the prerequisites first: sudo dnf install alacritty tmux neovim git curl coreutils fontconfig\n' >&2
+usage() {
+  cat <<'EOF'
+Usage: ./install.sh [--skip-system-packages]
+
+Installs the missing Ubuntu/Fedora packages, a compatible Neovim, the
+JetBrainsMono Nerd Font and the repository-managed LazyGit. Use
+--skip-system-packages only when the required system packages are already
+available or when package installation is managed elsewhere.
+EOF
+}
+
+case "${1-}" in
+  "") ;;
+  --skip-system-packages) skip_system_packages=true ;;
+  -h | --help) usage; exit 0 ;;
+  *) usage >&2; exit 2 ;;
+esac
+
+if [ ! -r "$os_release" ]; then
+  printf 'Unsupported Linux distribution: %s is unavailable.\n' "$os_release" >&2
   exit 1
 fi
+
+# shellcheck disable=SC1090
+. "$os_release"
+
+install_system_packages() {
+  local -a packages
+
+  case "$ID" in
+    ubuntu | debian)
+      packages=(alacritty tmux git curl coreutils fontconfig zsh make gcc tar unzip desktop-file-utils)
+      printf 'Installing missing prerequisites with apt...\n'
+      sudo apt-get update
+      sudo apt-get install -y "${packages[@]}"
+      ;;
+    fedora)
+      packages=(alacritty tmux neovim git curl coreutils fontconfig zsh make gcc tar unzip desktop-file-utils)
+      printf 'Installing missing prerequisites with dnf...\n'
+      sudo dnf install -y "${packages[@]}"
+      ;;
+    *)
+      printf 'Unsupported distribution: %s. Supported distributions: Ubuntu and Fedora.\n' "$ID" >&2
+      exit 1
+      ;;
+  esac
+}
+
+missing_system_packages=false
+for command in alacritty tmux git curl fc-list sha256sum tar unzip zsh make cc; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    missing_system_packages=true
+    break
+  fi
+done
+
+if "$missing_system_packages"; then
+  if "$skip_system_packages"; then
+    printf 'System prerequisites are missing. Re-run without --skip-system-packages.\n' >&2
+    exit 1
+  fi
+  install_system_packages
+fi
+
+version_at_least() {
+  [ "$(printf '%s\n%s\n' "$2" "$1" | sort -V | head -n 1)" = "$2" ]
+}
+
+system_nvim_bin() {
+  local candidate version
+
+  for candidate in /usr/local/bin/nvim /usr/bin/nvim; do
+    if [ -x "$candidate" ]; then
+      version="$($candidate --version | sed -n '1s/^NVIM v//p')"
+      if [ -n "$version" ] && version_at_least "$version" "$nvim_min_version"; then
+        printf '%s\n' "$candidate"
+        return 0
+      fi
+    fi
+  done
+
+  return 1
+}
+
+install_neovim() {
+  local architecture archive_name checksum download_url temp_dir archive extracted_dir
+
+  if [ -x "$nvim_bin" ] && version_at_least "$("$nvim_bin" --version | sed -n '1s/^NVIM v//p')" "$nvim_min_version"; then
+    printf 'Neovim %s is already installed in the repository runtime.\n' "$nvim_version"
+    return
+  fi
+
+  if system_nvim_bin >/dev/null; then
+    printf 'A compatible system Neovim is already available.\n'
+    return
+  fi
+
+  case "$(uname -m)" in
+    x86_64)
+      architecture="x86_64"
+      checksum="02b808a3ee8fc30161e07fe3c3edfb24b28bd0295323ac5dbdd8ec7012cac67d"
+      ;;
+    aarch64 | arm64)
+      architecture="arm64"
+      checksum="6959583f45042da20e0a082dc65108725629a4739ab91246c678fd084ecaf50e"
+      ;;
+    *)
+      printf 'Unsupported architecture for the bundled Neovim installer: %s\n' "$(uname -m)" >&2
+      exit 1
+      ;;
+  esac
+
+  archive_name="nvim-linux_${architecture}.tar.gz"
+  download_url="https://github.com/neovim/neovim/releases/download/v${nvim_version}/${archive_name}"
+  temp_dir="$(mktemp -d)"
+  archive="$temp_dir/$archive_name"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  printf 'Downloading Neovim %s...\n' "$nvim_version"
+  curl -fL "$download_url" -o "$archive"
+  printf '%s  %s\n' "$checksum" "$archive" | sha256sum -c -
+
+  tar -xzf "$archive" -C "$temp_dir"
+  extracted_dir="$temp_dir/nvim-linux_${architecture}"
+  if [ ! -x "$extracted_dir/bin/nvim" ]; then
+    printf 'The Neovim archive did not contain the expected executable.\n' >&2
+    exit 1
+  fi
+
+  mkdir -p "$(dirname "$nvim_dir")" "$(dirname "$nvim_bin")"
+  rm -rf "$nvim_dir"
+  mv "$extracted_dir" "$nvim_dir"
+  ln -sfn "$nvim_dir/bin/nvim" "$nvim_bin"
+}
+
+install_nerd_font() {
+  local archive_name download_url temp_dir archive
+
+  if fc-list --format '%{family}\n' | grep -Fxq "$font_family"; then
+    printf '%s is already installed.\n' "$font_family"
+    return
+  fi
+
+  archive_name="JetBrainsMono.zip"
+  download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${nerd_font_version}/${archive_name}"
+  temp_dir="$(mktemp -d)"
+  archive="$temp_dir/$archive_name"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  printf 'Downloading JetBrainsMono Nerd Font %s...\n' "$nerd_font_version"
+  curl -fL "$download_url" -o "$archive"
+  printf '%s  %s\n' "$font_checksum" "$archive" | sha256sum -c -
+
+  mkdir -p "$font_dir"
+  unzip -jo "$archive" '*.ttf' -d "$font_dir" >/dev/null
+  fc-cache -f "$font_dir"
+}
 
 install_lazygit() {
   local architecture archive_name checksum download_url temp_dir archive
@@ -58,6 +219,8 @@ install_lazygit() {
   install -m 0755 "$temp_dir/lazygit" "$lazygit_bin"
 }
 
+install_neovim
+install_nerd_font
 install_lazygit
 
 if ! grep -Fqx "$path_line" "$zshrc" 2>/dev/null; then
@@ -85,5 +248,6 @@ fi
 printf 'Open a new zsh session, then run: alacritty-tmux\n'
 printf 'Shift+Enter inserts a newline in supported TUIs and interactive zsh.\n'
 printf 'The KDE application entry now uses this repository configuration.\n'
+printf 'Neovim %s is available through: nvim\n' "$nvim_version"
 printf 'LazyGit %s is available through: lazygit\n' "$lazygit_version"
 printf 'For Neovim plugins, run: nvim "+Lazy sync"\n'

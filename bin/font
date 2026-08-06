@@ -96,7 +96,7 @@ select_font() {
 }
 
 if ! command -v fc-list >/dev/null; then
-  printf 'fc-list not found. Install it with: sudo dnf install fontconfig\n' >&2
+  printf 'fc-list not found. Run the repository installer to install fontconfig.\n' >&2
   exit 1
 fi
 

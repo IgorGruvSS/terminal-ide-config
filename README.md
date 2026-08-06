@@ -43,13 +43,16 @@ Esses diretórios permanecem dentro do repositório, mas não são versionados.
 ## Instalação rápida
 
 ```bash
-sudo dnf install alacritty tmux neovim git
 git clone https://github.com/IgorGruvSS/terminal-ide-config.git ~/terminal-ide-config
 cd ~/terminal-ide-config
 ./install.sh
 exec zsh
 alacritty-tmux
 ```
+
+Em Ubuntu e Fedora, o instalador detecta a distribuição, instala o que estiver
+faltando e mantém o restante intacto. Ele pede a senha do `sudo` somente se
+precisar instalar pacotes do sistema.
 
 O processo completo, incluindo dependências e primeira inicialização, está no
 [guia de instalação](docs/getting-started/installation.md).
