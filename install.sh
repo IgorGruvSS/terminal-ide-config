@@ -251,6 +251,9 @@ install_neovim
 install_nerd_font
 install_lazygit
 
+printf 'Synchronizing Neovim plugins...\n'
+"$root_dir/bin/nvim" --headless "+Lazy! sync" +qa
+
 if ! grep -Fqx "$path_line" "$zshrc" 2>/dev/null; then
   {
     printf '\n%s\n' "$marker"
