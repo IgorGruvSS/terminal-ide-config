@@ -49,18 +49,31 @@ fi
 # shellcheck disable=SC1090
 . "$os_release"
 
+has_usable_alacritty() {
+  local candidate launcher_path candidate_path
+
+  launcher_path="$(readlink -f "$root_dir/bin/alacritty")"
+  candidate="$(command -v alacritty 2>/dev/null || true)"
+  if [ -n "$candidate" ]; then
+    candidate_path="$(readlink -f "$candidate" 2>/dev/null || printf '%s' "$candidate")"
+    if [ "$candidate_path" != "$launcher_path" ]; then
+      return 0
+    fi
+  fi
+
+  command -v flatpak >/dev/null 2>&1 && flatpak info org.alacritty.Alacritty >/dev/null 2>&1
+}
+
 install_system_packages() {
-  local -a packages
+  local -a packages=("$@")
 
   case "$ID" in
     ubuntu | debian)
-      packages=(alacritty tmux git curl coreutils fontconfig zsh make gcc tar unzip desktop-file-utils)
       printf 'Installing missing prerequisites with apt...\n'
       sudo apt-get update
       sudo apt-get install -y "${packages[@]}"
       ;;
     fedora)
-      packages=(alacritty tmux neovim git curl coreutils fontconfig zsh make gcc tar unzip desktop-file-utils)
       printf 'Installing missing prerequisites with dnf...\n'
       sudo dnf install -y "${packages[@]}"
       ;;
@@ -71,20 +84,35 @@ install_system_packages() {
   esac
 }
 
-missing_system_packages=false
-for command in alacritty tmux git curl fc-list sha256sum tar unzip zsh make cc; do
+missing_packages=()
+if ! has_usable_alacritty; then
+  missing_packages+=(alacritty)
+fi
+
+for requirement in \
+  'tmux:tmux' \
+  'git:git' \
+  'curl:curl' \
+  'fc-list:fontconfig' \
+  'sha256sum:coreutils' \
+  'tar:tar' \
+  'unzip:unzip' \
+  'zsh:zsh' \
+  'make:make' \
+  'cc:gcc'; do
+  command="${requirement%%:*}"
+  package="${requirement#*:}"
   if ! command -v "$command" >/dev/null 2>&1; then
-    missing_system_packages=true
-    break
+    missing_packages+=("$package")
   fi
 done
 
-if "$missing_system_packages"; then
+if ((${#missing_packages[@]})); then
   if "$skip_system_packages"; then
     printf 'System prerequisites are missing. Re-run without --skip-system-packages.\n' >&2
     exit 1
   fi
-  install_system_packages
+  install_system_packages "${missing_packages[@]}"
 fi
 
 version_at_least() {

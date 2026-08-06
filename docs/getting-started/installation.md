@@ -52,7 +52,14 @@ caso ainda falte algum pré-requisito.
 
 Não é necessário começar com um Ubuntu limpo. Se, por exemplo, Alacritty e Zsh
 já estiverem instalados, mas tmux não, o instalador executa o `apt` e ele mantém
-os pacotes já presentes, instalando tmux e os demais requisitos que faltarem.
+os pacotes já presentes, solicitando apenas tmux e os demais requisitos que
+faltarem.
+
+O Alacritty é reconhecido quando estiver no `PATH`, independentemente do
+diretório de instalação, ou quando for o Flatpak `org.alacritty.Alacritty`. O
+launcher usa essa instalação existente e ainda fornece o arquivo de configuração
+deste repositório. Para um executável em um caminho não exposto no `PATH`, use
+`ALACRITTY_BIN=/caminho/para/alacritty ./install.sh`.
 
 O Oh My Zsh também é preservado. O instalador somente acrescenta ao `~/.zshrc`,
 quando ainda não existirem, o `PATH` para os launchers deste repositório e a

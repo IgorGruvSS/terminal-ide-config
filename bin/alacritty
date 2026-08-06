@@ -2,15 +2,32 @@
 set -euo pipefail
 
 root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-alacritty_bin="${ALACRITTY_BIN:-/usr/local/bin/alacritty}"
+launcher_path="$(readlink -f "$0")"
+alacritty_bin="${ALACRITTY_BIN:-}"
 
-if [ ! -x "$alacritty_bin" ]; then
+if [ -z "$alacritty_bin" ]; then
+  candidate="$(command -v alacritty 2>/dev/null || true)"
+  if [ -n "$candidate" ] && [ "$(readlink -f "$candidate")" != "$launcher_path" ]; then
+    alacritty_bin="$candidate"
+  fi
+fi
+
+if [ -z "$alacritty_bin" ] && [ -x /usr/local/bin/alacritty ]; then
+  alacritty_bin=/usr/local/bin/alacritty
+fi
+
+if [ -z "$alacritty_bin" ] && [ -x /usr/bin/alacritty ]; then
   alacritty_bin=/usr/bin/alacritty
 fi
 
-if [ ! -x "$alacritty_bin" ]; then
-  printf 'Alacritty not found. Set ALACRITTY_BIN or install Alacritty.\n' >&2
-  exit 1
+if [ -n "$alacritty_bin" ] && [ -x "$alacritty_bin" ]; then
+  exec "$alacritty_bin" --config-file "$root_dir/alacritty/alacritty.toml" "$@"
 fi
 
-exec "$alacritty_bin" --config-file "$root_dir/alacritty/alacritty.toml" "$@"
+if command -v flatpak >/dev/null 2>&1 && flatpak info org.alacritty.Alacritty >/dev/null 2>&1; then
+  exec flatpak run --filesystem="$root_dir:ro" org.alacritty.Alacritty \
+    --config-file "$root_dir/alacritty/alacritty.toml" "$@"
+fi
+
+printf 'Alacritty not found. Set ALACRITTY_BIN, add it to PATH, or install the org.alacritty.Alacritty Flatpak.\n' >&2
+exit 1
