@@ -163,7 +163,7 @@ install_neovim() {
       ;;
   esac
 
-  archive_name="nvim-linux_${architecture}.tar.gz"
+  archive_name="nvim-linux-${architecture}.tar.gz"
   download_url="https://github.com/neovim/neovim/releases/download/v${nvim_version}/${archive_name}"
   temp_dir="$(mktemp -d)"
   archive="$temp_dir/$archive_name"
@@ -174,7 +174,7 @@ install_neovim() {
   printf '%s  %s\n' "$checksum" "$archive" | sha256sum -c -
 
   tar -xzf "$archive" -C "$temp_dir"
-  extracted_dir="$temp_dir/nvim-linux_${architecture}"
+  extracted_dir="$temp_dir/nvim-linux-${architecture}"
   if [ ! -x "$extracted_dir/bin/nvim" ]; then
     printf 'The Neovim archive did not contain the expected executable.\n' >&2
     exit 1
