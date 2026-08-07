@@ -1,6 +1,7 @@
 return {
 	{
 		"neovim/nvim-lspconfig",
+		lazy = false,
 
 		config = function()
 			vim.diagnostic.config({
@@ -64,7 +65,23 @@ return {
 				},
 			})
 			enable_if_executable("ts_ls", "typescript-language-server")
-			enable_if_executable("vue_ls", "vue-language-server")
+
+			-- Vue 2 projects need to pin the legacy Vue Language Server in their
+			-- own dependencies. Prefer that binary over a newer global Volar.
+			vim.lsp.config("vue_ls", {
+				capabilities = capabilities,
+				cmd = function(dispatchers, config)
+					local command = "vue-language-server"
+					if config.root_dir then
+						local local_command = vim.fs.joinpath(config.root_dir, "node_modules", ".bin", command)
+						if vim.fn.executable(local_command) == 1 then
+							command = local_command
+						end
+					end
+					return vim.lsp.rpc.start({ command, "--stdio" }, dispatchers)
+				end,
+			})
+			vim.lsp.enable("vue_ls")
 
 			if vim.fn.executable("basedpyright") == 1 then
 				vim.lsp.config("basedpyright", { capabilities = capabilities })
