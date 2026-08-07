@@ -10,18 +10,27 @@ shell_marker='# terminal-ide-config shell integration'
 shell_line="source \"$root_dir/shell/zsh/terminal-ide.zsh\""
 desktop_dir="$HOME/.local/share/applications"
 desktop_file="$desktop_dir/Alacritty.desktop"
+systemd_user_dir="$HOME/.config/systemd/user"
+theme_sync_service="$systemd_user_dir/alacritty-theme-sync.service"
 lazygit_version="0.62.0"
 lazygit_dir="$root_dir/.local/bin"
 lazygit_bin="$lazygit_dir/lazygit"
-nvim_version="0.11.3"
-nvim_min_version="0.11.0"
+nvim_version="0.12.4"
+nvim_min_version="0.12.0"
 nvim_dir="$root_dir/.local/opt/nvim-$nvim_version"
 nvim_bin="$root_dir/.local/bin/nvim"
+tree_sitter_version="0.26.11"
+tree_sitter_dir="$root_dir/.local/opt/tree-sitter-$tree_sitter_version"
+tree_sitter_bin="$root_dir/.local/bin/tree-sitter"
 nerd_font_version="3.4.0"
 font_checksum="76f05ff3ace48a464a6ca57977998784ff7bdbb65a6d915d7e401cd3927c493c"
 font_family="JetBrainsMono Nerd Font"
 font_dir="$HOME/.local/share/fonts/terminal-ide-config"
 skip_system_packages=false
+
+# Make repository-managed tools available to the plugin bootstrap that runs
+# later in this script.
+export PATH="$root_dir/.local/bin:$PATH"
 
 usage() {
   cat <<'EOF'
@@ -50,16 +59,21 @@ fi
 . "$os_release"
 
 has_usable_alacritty() {
-  local candidate launcher_path candidate_path
+  local candidate launcher_path candidate_path path_candidate
 
   launcher_path="$(readlink -f "$root_dir/bin/alacritty")"
-  candidate="$(command -v alacritty 2>/dev/null || true)"
-  if [ -n "$candidate" ]; then
+  for path_candidate in \
+    "${ALACRITTY_BIN:-}" \
+    "$(command -v alacritty 2>/dev/null || true)" \
+    /usr/local/bin/alacritty \
+    /usr/bin/alacritty; do
+    candidate="$path_candidate"
+    [ -n "$candidate" ] && [ -x "$candidate" ] || continue
     candidate_path="$(readlink -f "$candidate" 2>/dev/null || printf '%s' "$candidate")"
     if [ "$candidate_path" != "$launcher_path" ]; then
       return 0
     fi
-  fi
+  done
 
   command -v flatpak >/dev/null 2>&1 && flatpak info org.alacritty.Alacritty >/dev/null 2>&1
 }
@@ -151,11 +165,11 @@ install_neovim() {
   case "$(uname -m)" in
     x86_64)
       architecture="x86_64"
-      checksum="02b808a3ee8fc30161e07fe3c3edfb24b28bd0295323ac5dbdd8ec7012cac67d"
+      checksum="012bf3fcac5ade43914df3f174668bf64d05e049a4f032a388c027b1ebd78628"
       ;;
     aarch64 | arm64)
       architecture="arm64"
-      checksum="6959583f45042da20e0a082dc65108725629a4739ab91246c678fd084ecaf50e"
+      checksum="ceb7e88c6b681f0515d135dcdfad54f5eb4373b25ce6172197cd9a69c758063f"
       ;;
     *)
       printf 'Unsupported architecture for the bundled Neovim installer: %s\n' "$(uname -m)" >&2
@@ -184,6 +198,52 @@ install_neovim() {
   rm -rf "$nvim_dir"
   mv "$extracted_dir" "$nvim_dir"
   ln -sfn "$nvim_dir/bin/nvim" "$nvim_bin"
+}
+
+install_tree_sitter() {
+  local architecture archive_name checksum download_url temp_dir archive
+
+  if [ -x "$tree_sitter_bin" ] && "$tree_sitter_bin" --version 2>/dev/null | grep -Fq "$tree_sitter_version"; then
+    printf 'tree-sitter %s is already installed in the repository runtime.\n' "$tree_sitter_version"
+    return
+  fi
+
+  case "$(uname -m)" in
+    x86_64)
+      architecture="x64"
+      checksum="ff1b7f9863f2faafd78dc0e66d902ee85b37f709b314b22c009f51caf233eebd"
+      ;;
+    aarch64 | arm64)
+      architecture="arm64"
+      checksum="db28509fe6db8902f9d14c43c486858c7486b42c3a96b30e811e73f105762336"
+      ;;
+    *)
+      printf 'Unsupported architecture for the bundled tree-sitter installer: %s\n' "$(uname -m)" >&2
+      exit 1
+      ;;
+  esac
+
+  archive_name="tree-sitter-cli-linux-$architecture.zip"
+  download_url="https://github.com/tree-sitter/tree-sitter/releases/download/v${tree_sitter_version}/$archive_name"
+  temp_dir="$(mktemp -d)"
+  archive="$temp_dir/$archive_name"
+  trap 'rm -rf "$temp_dir"' RETURN
+
+  printf 'Downloading tree-sitter %s...\n' "$tree_sitter_version"
+  curl -fL "$download_url" -o "$archive"
+  printf '%s  %s\n' "$checksum" "$archive" | sha256sum -c -
+
+  unzip -jo "$archive" -d "$temp_dir" >/dev/null
+  if [ ! -x "$temp_dir/tree-sitter" ]; then
+    printf 'The tree-sitter archive did not contain the expected executable.\n' >&2
+    exit 1
+  fi
+
+  mkdir -p "$(dirname "$tree_sitter_dir")" "$(dirname "$tree_sitter_bin")"
+  rm -rf "$tree_sitter_dir"
+  mkdir -p "$tree_sitter_dir"
+  install -m 0755 "$temp_dir/tree-sitter" "$tree_sitter_dir/tree-sitter"
+  ln -sfn "$tree_sitter_dir/tree-sitter" "$tree_sitter_bin"
 }
 
 install_nerd_font() {
@@ -248,6 +308,7 @@ install_lazygit() {
 }
 
 install_neovim
+install_tree_sitter
 install_nerd_font
 install_lazygit
 
@@ -276,9 +337,25 @@ if command -v update-desktop-database >/dev/null; then
   update-desktop-database "$desktop_dir"
 fi
 
+if command -v gdbus >/dev/null && command -v systemctl >/dev/null; then
+  mkdir -p "$systemd_user_dir"
+  sed "s|@TERMINAL_IDE_CONFIG_DIR@|$root_dir|g" \
+    "$root_dir/systemd/alacritty-theme-sync.service.in" > "$theme_sync_service"
+  if systemctl --user daemon-reload && \
+    systemctl --user enable --now alacritty-theme-sync.service; then
+    :
+  else
+    printf 'Could not enable the Alacritty theme sync user service in this session.\n' >&2
+  fi
+else
+  printf 'Alacritty theme sync was not enabled: gdbus and systemctl are required.\n' >&2
+fi
+
 printf 'Open a new zsh session, then run: alacritty-tmux\n'
 printf 'Shift+Enter inserts a newline in supported TUIs and interactive zsh.\n'
 printf 'The KDE application entry now uses this repository configuration.\n'
+printf 'Alacritty now follows KDE’s light/dark preference.\n'
 printf 'Neovim %s is available through: nvim\n' "$nvim_version"
+printf 'tree-sitter %s is available through: tree-sitter\n' "$tree_sitter_version"
 printf 'LazyGit %s is available through: lazygit\n' "$lazygit_version"
 printf 'For Neovim plugins, run: nvim "+Lazy sync"\n'

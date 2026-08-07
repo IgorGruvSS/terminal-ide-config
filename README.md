@@ -16,7 +16,7 @@ canônicos, launchers, documentação e estado local ficam neste repositório.
 ## Responsabilidades
 
 ```text
-Alacritty → janela, renderização, teclado e tema
+Alacritty → janela, renderização, teclado e tema (sincronizado com o KDE)
 tmux      → sessões persistentes, windows e panes
 Neovim    → edição, LSP, completion, navegação e ferramentas Git
 LazyGit   → status, diff, stage, commit, branches, rebase e remotes
@@ -24,6 +24,10 @@ LazyGit   → status, diff, stage, commit, branches, rebase e remotes
 
 `alacritty-tmux` é o ponto de entrada diário. Ele abre o Alacritty com a
 configuração deste repositório e conecta a uma sessão persistente do tmux.
+
+No KDE Plasma, o tema do Alacritty acompanha a preferência claro/escuro do
+sistema. O instalador habilita o serviço de usuário necessário. Para aplicá-lo
+em uma instalação existente, execute novamente `./install.sh`.
 
 ## Estrutura
 

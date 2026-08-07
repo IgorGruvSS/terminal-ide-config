@@ -1,0 +1,32 @@
+# Light palette paired with the repository's Aura dark theme.
+
+[colors.primary]
+background = '#f7f5fa'
+foreground = '#2b2936'
+
+[colors.normal]
+black   = '#2b2936'
+red     = '#b42346'
+green   = '#18765b'
+yellow  = '#805b00'
+blue    = '#6553b7'
+magenta = '#7d4699'
+cyan    = '#007c83'
+white   = '#e6e1ea'
+
+[colors.bright]
+black   = '#655f6c'
+red     = '#cf3155'
+green   = '#14866a'
+yellow  = '#936800'
+blue    = '#5542ad'
+magenta = '#8b3fab'
+cyan    = '#008b93'
+white   = '#ffffff'
+
+[colors.selection]
+text       = 'CellForeground'
+background = '#dfd9e8'
+
+[colors.cursor]
+cursor = '#6553b7'

@@ -41,7 +41,8 @@ vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup("plugins")
 
-vim.cmd.colorscheme("aura-dark")
+vim.o.background = "light"
+vim.cmd.colorscheme("PaperColor")
 
 local function apply_custom_highlights()
 	vim.api.nvim_set_hl(0, "@tag", { fg = "#61ffca" })

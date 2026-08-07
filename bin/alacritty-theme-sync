@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Keep Alacritty's palette aligned with the desktop preference advertised by
+# the XDG Settings portal. KDE Plasma exposes this through xdg-desktop-portal.
+
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+theme_dir="$root_dir/alacritty/themes"
+active_theme="$theme_dir/active.toml"
+portal_dest="org.freedesktop.portal.Desktop"
+portal_path="/org/freedesktop/portal/desktop"
+portal_method="org.freedesktop.portal.Settings.Read"
+
+set_active_theme() {
+  local scheme source temporary
+
+  if ! scheme="$(gdbus call --session \
+    --dest "$portal_dest" \
+    --object-path "$portal_path" \
+    --method "$portal_method" \
+    org.freedesktop.appearance color-scheme 2>/dev/null)"; then
+    printf 'Alacritty theme sync: the XDG Settings portal is unavailable.\n' >&2
+    return 1
+  fi
+
+  case "$scheme" in
+    *"uint32 1"*) source="$theme_dir/aura-theme.toml" ;; # Prefer dark
+    *) source="$theme_dir/aura-light-theme.toml" ;;       # Prefer light/no preference
+  esac
+
+  if cmp -s "$source" "$active_theme"; then
+    return
+  fi
+
+  temporary="$(mktemp "$theme_dir/.active.toml.XXXXXX")"
+  cp "$source" "$temporary"
+  mv "$temporary" "$active_theme"
+}
+
+if [ "${1-}" = "--once" ]; then
+  set_active_theme
+  exit 0
+fi
+
+while true; do
+  set_active_theme || true
+  gdbus monitor --session --dest "$portal_dest" --object-path "$portal_path" 2>/dev/null |
+    while IFS= read -r event; do
+      case "$event" in
+        *"org.freedesktop.appearance"*"color-scheme"*) set_active_theme || true ;;
+      esac
+    done || true
+  # The portal can be restarted while the desktop session remains active.
+  # Reconnect after a short delay instead of leaving the synchronizer stopped.
+  true
+  sleep 2
+done

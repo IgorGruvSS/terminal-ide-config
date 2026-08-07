@@ -1,0 +1,13 @@
+[Unit]
+Description=Synchronize Alacritty palette with the KDE color preference
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=@TERMINAL_IDE_CONFIG_DIR@/bin/alacritty-theme-sync
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target

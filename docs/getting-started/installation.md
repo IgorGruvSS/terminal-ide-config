@@ -39,7 +39,7 @@ O instalador também:
 
 - instala os pacotes necessários com `apt` (Ubuntu) ou `dnf` (Fedora), apenas
   quando algum estiver ausente;
-- baixa Neovim 0.11.3 para o runtime do repositório quando o Neovim do sistema
+- baixa Neovim 0.12.4 e tree-sitter 0.26.11 para o runtime do repositório quando o Neovim do sistema
   for ausente ou antigo para esta configuração;
 - instala a JetBrainsMono Nerd Font no diretório de fontes do usuário;
 - baixa a versão fixada do LazyGit e valida os checksums dos downloads.

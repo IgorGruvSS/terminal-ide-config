@@ -64,6 +64,7 @@ return {
 				},
 			})
 			enable_if_executable("ts_ls", "typescript-language-server")
+			enable_if_executable("vue_ls", "vue-language-server")
 
 			if vim.fn.executable("basedpyright") == 1 then
 				vim.lsp.config("basedpyright", { capabilities = capabilities })

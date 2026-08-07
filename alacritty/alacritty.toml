@@ -1,7 +1,7 @@
 # Alacritty owns terminal rendering. Tmux owns panes, windows, and sessions.
 
 [general]
-import = ["themes/aura-theme.toml"]
+import = ["themes/active.toml"]
 ipc_socket = true
 
 [font]
