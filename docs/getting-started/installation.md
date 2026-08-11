@@ -17,6 +17,9 @@ detecta a distribuição e instala somente os pacotes ausentes. É preciso ter:
 - conexão com a internet para baixar componentes versionados;
 - permissão para usar `sudo` quando faltarem pacotes do sistema.
 
+O `ripgrep` também é instalado como dependência: ele fornece o comando `rg`,
+usado pela busca de conteúdo (`Space f g`) do Telescope no Neovim.
+
 No Ubuntu, o repositório `universe` deve estar habilitado para instalar o
 Alacritty. Em instalações padrão ele já vem habilitado. Se o `apt` informar que
 não encontrou o pacote, execute uma vez:

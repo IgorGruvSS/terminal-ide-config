@@ -113,7 +113,8 @@ for requirement in \
   'unzip:unzip' \
   'zsh:zsh' \
   'make:make' \
-  'cc:gcc'; do
+  'cc:gcc' \
+  'rg:ripgrep'; do
   command="${requirement%%:*}"
   package="${requirement#*:}"
   if ! command -v "$command" >/dev/null 2>&1; then
