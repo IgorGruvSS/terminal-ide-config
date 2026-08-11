@@ -25,10 +25,15 @@ Os atalhos existem quando um servidor conseguiu se conectar ao buffer.
 | --- | --- |
 | Go | `gopls` |
 | Lua | `lua-language-server` |
-| JavaScript / TypeScript | `typescript-language-server` |
+| JavaScript / TypeScript / Vue | `typescript-language-server` e `vue-language-server` |
 | Python | `basedpyright` ou `pyright` |
 | JSON | `vscode-json-language-server` |
 | YAML | `yaml-language-server` |
+
+Em projetos Vue 2, instale e fixe `vue-language-server` nas dependências do
+próprio projeto; essa cópia tem precedência sobre uma instalação global. O
+servidor TypeScript também encaminha os pedidos do Vue e pode localizar um
+`tsserver` instalado globalmente pelo NVM.
 
 Use `:checkhealth vim.lsp` se um atalho semântico não responder.
 
@@ -70,12 +75,12 @@ O Conform formata ao salvar quando o executável necessário está disponível.
 | --- | --- |
 | Lua | `stylua` |
 | Go | `goimports`, depois `gofmt` |
-| JavaScript, TypeScript, JSX e TSX | `prettier` |
+| JavaScript, TypeScript, JSX, TSX e Vue | `prettier` |
 | JSON, YAML e Markdown | `prettier` |
 | Python | `black` |
 
-Use `:ConformInfo` para diagnóstico. O Prettier só roda quando encontra um
-diretório de projeto adequado.
+Use `:ConformInfo` para diagnóstico. O Prettier formata por arquivo temporário,
+o que também mantém compatibilidade com projetos Vue 2 que usam Prettier 1.x.
 
 ## Markdown
 

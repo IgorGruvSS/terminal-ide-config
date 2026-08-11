@@ -64,12 +64,87 @@ return {
 					},
 				},
 			})
-			enable_if_executable("ts_ls", "typescript-language-server")
+			enable_if_executable("ts_ls", "typescript-language-server", {
+				-- Normalize Neovim's stdio handles to regular pipes before handing
+				-- them to the Node-based language server.
+				cmd = { "sh", "-c", "tee /dev/null | typescript-language-server --stdio | tee /dev/null" },
+				init_options = {
+					tsserver = {
+						-- Global npm installs managed by NVM are outside the project tree.
+						-- Pass the executable explicitly so typescript-language-server can
+						-- resolve the matching global TypeScript package.
+						path = vim.fn.exepath("tsserver"),
+					},
+				},
+				filetypes = {
+					"javascript",
+					"javascriptreact",
+					"typescript",
+					"typescriptreact",
+					"vue",
+				},
+				before_init = function(params, config)
+					if not config.root_dir then
+						return
+					end
+
+					local vue_language_server = vim.fs.joinpath(
+						config.root_dir,
+						"node_modules",
+						"@vue",
+						"language-server"
+					)
+					if not vim.uv.fs_stat(vue_language_server) then
+						return
+					end
+
+					params.initializationOptions = params.initializationOptions or {}
+					params.initializationOptions.plugins = {
+						{
+							name = "@vue/typescript-plugin",
+							location = vue_language_server,
+							languages = { "vue" },
+						},
+					}
+				end,
+			})
 
 			-- Vue 2 projects need to pin the legacy Vue Language Server in their
 			-- own dependencies. Prefer that binary over a newer global Volar.
 			vim.lsp.config("vue_ls", {
 				capabilities = capabilities,
+				on_init = function(client)
+					client.handlers["tsserver/request"] = function(_, result, context)
+						local function forward_request(attempt)
+							local ts_client = vim.lsp.get_clients({ bufnr = context.bufnr, name = "ts_ls" })[1]
+							if not ts_client then
+								if attempt < 100 then
+									vim.defer_fn(function()
+										forward_request(attempt + 1)
+									end, 100)
+								else
+									vim.notify(
+										"TypeScript LSP did not attach to the Vue buffer.",
+										vim.log.levels.ERROR
+									)
+								end
+								return
+							end
+
+							local request = unpack(result)
+							local id, command, payload = unpack(request)
+							ts_client:exec_cmd({
+								title = "vue_request_forward",
+								command = "typescript.tsserverRequest",
+								arguments = { command, payload },
+							}, { bufnr = context.bufnr }, function(_, response)
+								client:notify("tsserver/response", { { id, response and response.body } })
+							end)
+						end
+
+						forward_request(1)
+					end
+				end,
 				cmd = function(dispatchers, config)
 					local command = "vue-language-server"
 					if config.root_dir then

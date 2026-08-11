@@ -13,6 +13,7 @@ return {
 					javascriptreact = { "prettier" },
 					typescript = { "prettier" },
 					typescriptreact = { "prettier" },
+					vue = { "prettier" },
 
 					json = { "prettier" },
 					yaml = { "prettier" },
@@ -28,7 +29,10 @@ return {
 
 				formatters = {
 					prettier = {
-						require_cwd = true,
+						-- Prettier 1.x can return empty output through Neovim's stdin pipe.
+						-- Let Conform format a temporary file for compatibility with Vue 2 projects.
+						stdin = false,
+						args = { "--write", "$FILENAME" },
 					},
 				},
 			})
