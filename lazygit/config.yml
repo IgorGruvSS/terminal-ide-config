@@ -7,25 +7,27 @@ gui:
   showPanelJumps: true
   theme:
     activeBorderColor:
-      - "#a277ff"
+      - green
       - bold
     inactiveBorderColor:
-      - "#6d6d6d"
+      - default
     searchingActiveBorderColor:
-      - "#61ffca"
+      - cyan
       - bold
     optionsTextColor:
-      - "#61ffca"
+      - blue
     selectedLineBgColor:
-      - "#29263c"
+      - reverse
     selectedRangeBgColor:
-      - "#29263c"
+      - reverse
     cherryPickedCommitBgColor:
-      - "#29263c"
+      - cyan
     cherryPickedCommitFgColor:
-      - "#f694ff"
+      - blue
     unstagedChangesColor:
-      - "#ff6767"
+      - red
+    defaultFgColor:
+      - default
 git:
   branchLogCmd: git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=oneline {{branchName}} --
   allBranchesLogCmds:

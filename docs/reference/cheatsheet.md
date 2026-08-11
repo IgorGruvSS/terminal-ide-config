@@ -11,7 +11,8 @@
 
 ## Responsibilities
 
-- **Alacritty:** window, font, scrollback, and the official Aura theme.
+- **Alacritty:** window, font, scrollback, and the theme profile synchronized
+  with Neovim and KDE.
 - **tmux:** sessions, windows, panes, navigation, and resize.
 - **Neovim:** editing, LSP, completion, Neo-tree, and Git tools.
 

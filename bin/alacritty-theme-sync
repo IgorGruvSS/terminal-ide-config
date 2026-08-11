@@ -5,14 +5,12 @@ set -euo pipefail
 # the XDG Settings portal. KDE Plasma exposes this through xdg-desktop-portal.
 
 root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
-theme_dir="$root_dir/alacritty/themes"
-active_theme="$theme_dir/active.toml"
 portal_dest="org.freedesktop.portal.Desktop"
 portal_path="/org/freedesktop/portal/desktop"
 portal_method="org.freedesktop.portal.Settings.Read"
 
 set_active_theme() {
-  local scheme source temporary
+  local scheme profile mode
 
   if ! scheme="$(gdbus call --session \
     --dest "$portal_dest" \
@@ -24,17 +22,12 @@ set_active_theme() {
   fi
 
   case "$scheme" in
-    *"uint32 1"*) source="$theme_dir/aura-theme.toml" ;; # Prefer dark
-    *) source="$theme_dir/aura-light-theme.toml" ;;       # Prefer light/no preference
+    *"uint32 1"*) mode=dark ;; # Prefer dark
+    *) mode=light ;;            # Prefer light/no preference
   esac
 
-  if cmp -s "$source" "$active_theme"; then
-    return
-  fi
-
-  temporary="$(mktemp "$theme_dir/.active.toml.XXXXXX")"
-  cp "$source" "$temporary"
-  mv "$temporary" "$active_theme"
+  profile="$("$root_dir/bin/alacritty-theme" current | sed -n 's/^Current: \([^ ]*\).*/\1/p')"
+  "$root_dir/bin/alacritty-theme" set "${profile:-aura}" "$mode"
 }
 
 if [ "${1-}" = "--once" ]; then

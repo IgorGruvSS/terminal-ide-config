@@ -2,36 +2,63 @@
 
 ## Índice
 
-- [Tema ativo](#tema-ativo)
-- [Temas instalados](#temas-instalados)
+- [Perfis sincronizados](#perfis-sincronizados)
 - [Trocar o tema](#trocar-o-tema)
+- [Temas instalados](#temas-instalados)
 - [Melhorias visuais](#melhorias-visuais)
 
-## Tema ativo
+## Perfis sincronizados
 
-O tema persistente é **Aura Dark**, definido por
-`vim.cmd.colorscheme("aura-dark")` em `nvim/init.lua`.
+Alacritty e Neovim usam o mesmo perfil e modo (claro ou escuro). A seleção fica
+em `.local/state/alacritty-theme`: o Alacritty a recarrega automaticamente e o
+Neovim a aplica ao iniciar ou ao receber foco.
 
-## Temas instalados
-
-| Plugin | Temas | Estado |
+| Perfil | Neovim claro | Neovim escuro |
 | --- | --- | --- |
-| `baliestri/aura-theme` | quatro variantes Aura | `aura-dark` ativo |
-| `catppuccin/nvim` | latte, frappe, macchiato e mocha | inativo |
-| `getomni/neovim` | `omni` | inativo |
+| `aura` | PaperColor | Aura Dark |
+| `alabaster` | Alabaster | PaperColor |
+| `modus` | Modus Operandi | Modus Vivendi |
+| `flexoki` | Flexoki Light | Flexoki Dark |
+| `github` | GitHub Light | GitHub Dark |
+| `catppuccin` | Catppuccin Latte | Catppuccin Macchiato |
+
+Sem uma seleção salva, o Neovim usa Aura e preserva seu `background` atual.
 
 ## Trocar o tema
 
-Para experimentar durante a sessão:
+Liste os perfis disponíveis e escolha um par:
+
+```bash
+alacritty-theme list
+alacritty-theme set flexoki dark
+alacritty-theme set github light
+```
+
+Para preservar o perfil escolhido e alternar somente conforme a preferência
+claro/escuro do KDE Plasma, use:
+
+```bash
+alacritty-theme system
+```
+
+O serviço instalado para o portal do KDE também executa essa sincronização
+quando a preferência do sistema muda. Dentro do Neovim, `:ThemeSync` força a
+leitura do estado e `:ThemeCurrent` informa a seleção atual.
+
+## Temas instalados
+
+Além dos temas usados pelos perfis, Aura inclui variantes extras e Catppuccin
+também disponibiliza frappe e mocha. É possível testar qualquer esquema durante
+a sessão:
+
 
 ```vim
 :colorscheme catppuccin-mocha
-:colorscheme omni
 :colorscheme aura-dark
 ```
 
-Para persistir, altere `vim.cmd.colorscheme(...)` em `nvim/init.lua`. As cores
-customizadas de tags TSX/JSX são reaplicadas após cada troca.
+Essas trocas são temporárias: `:ThemeSync`, uma nova sessão ou retornar o foco
+ao Neovim restaura o perfil selecionado.
 
 ## Melhorias visuais
 

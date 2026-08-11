@@ -16,8 +16,8 @@ vezes.
 - [Edição e inteligência de código](coding.md): LSP, completion, formatação,
   auto-save, alterações externas e Markdown.
 - [Git dentro do Neovim](git.md): LazyGit, Diffview e Gitsigns.
-- [Aparência e temas](appearance.md): Aura, temas alternativos e melhorias
-  visuais.
+- [Aparência e temas](appearance.md): perfis sincronizados entre Alacritty,
+  Neovim e KDE, além de melhorias visuais.
 - [Plugins](plugins.md): inventário completo e estrutura das configurações.
 
 ## Descobrir comandos

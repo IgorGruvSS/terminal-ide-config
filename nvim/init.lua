@@ -40,27 +40,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup("plugins")
-
-vim.o.background = "light"
-vim.cmd.colorscheme("PaperColor")
-
-local function apply_custom_highlights()
-	vim.api.nvim_set_hl(0, "@tag", { fg = "#61ffca" })
-	vim.api.nvim_set_hl(0, "@tag.tsx", { fg = "#61ffca" })
-	vim.api.nvim_set_hl(0, "@tag.javascript", { fg = "#61ffca" })
-	vim.api.nvim_set_hl(0, "@tag.attribute", { fg = "#a277ff" })
-	vim.api.nvim_set_hl(0, "@tag.attribute.tsx", { fg = "#a277ff" })
-	vim.api.nvim_set_hl(0, "@tag.attribute.javascript", { fg = "#a277ff" })
-	vim.api.nvim_set_hl(0, "@tag.delimiter", { fg = "#6d6d6d" })
-	vim.api.nvim_set_hl(0, "@tag.delimiter.tsx", { fg = "#6d6d6d" })
-	vim.api.nvim_set_hl(0, "@tag.delimiter.javascript", { fg = "#6d6d6d" })
-end
-
-apply_custom_highlights()
-
-vim.api.nvim_create_autocmd("ColorScheme", {
-	callback = apply_custom_highlights,
-})
+require("theme-sync")
 
 local external_changes_group = vim.api.nvim_create_augroup("external_file_changes", { clear = true })
 

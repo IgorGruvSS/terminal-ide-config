@@ -48,7 +48,7 @@ continuam os mesmos.
 | `indent-blankline.nvim` | Guias de indentação |
 | `nvim-highlight-colors` | Prévia de cores |
 | `nvim-web-devicons` | Ícones |
-| Aura, Catppuccin e Omni | Temas |
+| Aura, Alabaster, Catppuccin, Flexoki, GitHub e Modus | Temas sincronizados com o Alacritty |
 
 ## Infraestrutura
 

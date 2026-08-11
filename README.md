@@ -72,6 +72,9 @@ O processo completo, incluindo dependências e primeira inicialização, está n
 | `lazygit` | Usar o LazyGit gerenciado pelo repositório |
 | `font <família>` | Testar temporariamente uma fonte com autocomplete no zsh |
 | `font save` | Salvar a fonte atual como padrão |
+| `alacritty-theme list` | Listar os pares de temas de teste para Alacritty e Neovim |
+| `alacritty-theme set <tema> <light\|dark>` | Trocar o tema pareado nos dois programas |
+| `alacritty-theme system` | Aplicar ao par escolhido a preferência claro/escuro do KDE |
 
 ## Documentação
 
