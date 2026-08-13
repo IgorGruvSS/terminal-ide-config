@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# shellcheck disable=SC1007
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+stylua_bin="$root_dir/.local/share/nvim/mason/bin/stylua"
+
+if [ ! -x "$stylua_bin" ]; then
+  printf 'StyLua is not installed in Mason. Run: %s/install.sh\n' "$root_dir" >&2
+  exit 1
+fi
+
+exec "$stylua_bin" "$@"

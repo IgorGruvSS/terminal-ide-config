@@ -24,6 +24,8 @@ nvim_bin="$root_dir/.local/bin/nvim"
 tree_sitter_version="0.26.11"
 tree_sitter_dir="$root_dir/.local/opt/tree-sitter-$tree_sitter_version"
 tree_sitter_bin="$root_dir/.local/bin/tree-sitter"
+stylua_bin="$root_dir/.local/share/nvim/mason/bin/stylua"
+stylua_launcher="$root_dir/bin/stylua"
 nerd_font_version="3.4.0"
 font_checksum="76f05ff3ace48a464a6ca57977998784ff7bdbb65a6d915d7e401cd3927c493c"
 font_family="JetBrainsMono Nerd Font"
@@ -344,6 +346,25 @@ install_lazygit() {
   install -m 0755 "$temp_dir/lazygit" "$lazygit_bin"
 }
 
+verify_stylua() {
+  if [ ! -x "$stylua_bin" ]; then
+    printf 'Mason did not install StyLua at the expected path: %s\n' "$stylua_bin" >&2
+    exit 1
+  fi
+
+  if [ ! -x "$stylua_launcher" ]; then
+    printf 'StyLua launcher is missing or not executable: %s\n' "$stylua_launcher" >&2
+    exit 1
+  fi
+
+  if ! "$stylua_launcher" --version >/dev/null 2>&1; then
+    printf 'StyLua launcher could not execute the Mason binary: %s\n' "$stylua_launcher" >&2
+    exit 1
+  fi
+
+  printf 'StyLua is available through the repository launcher.\n'
+}
+
 install_neovim
 install_tree_sitter
 install_nerd_font
@@ -358,6 +379,8 @@ printf 'Synchronizing Neovim plugins, parsers and tools...\n'
   "+lua if not require('config.treesitter').install_all() then vim.cmd('cquit') end" \
   "+lua if not require('config.mason').install_all() then vim.cmd('cquit') end" \
   +qa
+
+verify_stylua
 
 if ! grep -Fqx "$path_line" "$zshrc" 2>/dev/null; then
   {
@@ -404,4 +427,5 @@ printf 'Alacritty now follows KDE’s light/dark preference.\n'
 printf 'Neovim %s is available through: nvim\n' "$nvim_version"
 printf 'tree-sitter %s is available through: tree-sitter\n' "$tree_sitter_version"
 printf 'LazyGit %s is available through: lazygit\n' "$lazygit_version"
+printf 'StyLua is available through: stylua\n'
 printf 'For Neovim plugins, run: nvim "+Lazy sync"\n'

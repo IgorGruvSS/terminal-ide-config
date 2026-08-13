@@ -49,7 +49,7 @@ O instalador também:
 - instala a JetBrainsMono Nerd Font no diretório de fontes do usuário;
 - baixa a versão fixada do LazyGit e valida os checksums dos downloads;
 - sincroniza o lockfile do LazyVim e espera a instalação declarativa das
-  ferramentas no Mason.
+  ferramentas no Mason, incluindo o StyLua usado para formatar Lua.
 
 Para máquinas em que os pacotes são administrados externamente, use
 `./install.sh --skip-system-packages`. O comando falha sem alterar a instalação
@@ -77,6 +77,10 @@ Ao final, a entrada de aplicativo do KDE aponta para o Alacritty configurado
 pelo repositório. Plugins e ferramentas do Neovim já foram sincronizados; use
 `alacritty-tmux` como ponto de entrada diário.
 
+O comando `stylua` é exposto pelo `bin/` do repositório e encaminha para a
+instalação correspondente do Mason. O instalador verifica esse launcher ao
+final, sem adicionar o diretório inteiro do Mason ao `PATH`.
+
 ## O que o instalador altera
 
 O repositório continua sendo a única fonte das configurações. O instalador:
@@ -96,6 +100,7 @@ O instalador já sincroniza plugins e ferramentas. Para conferir a instalação:
 ```bash
 nvim '+Lazy'
 nvim '+Mason'
+stylua --version
 ```
 
 Depois abra o ambiente:
