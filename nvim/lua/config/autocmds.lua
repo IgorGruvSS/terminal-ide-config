@@ -1,5 +1,3 @@
-require("theme-sync")
-
 local external_changes = vim.api.nvim_create_augroup("external_file_changes", { clear = true })
 
 local function check_external_changes()
