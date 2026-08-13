@@ -10,14 +10,6 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		opts = function(_, opts)
-			opts.diagnostics = vim.tbl_deep_extend("force", opts.diagnostics or {}, {
-				severity_sort = true,
-				underline = true,
-				update_in_insert = false,
-				virtual_text = { prefix = ">>", source = "if_many", spacing = 4 },
-				float = { border = "rounded", source = "always" },
-			})
-
 			opts.servers = opts.servers or {}
 			opts.servers["*"] = vim.tbl_deep_extend("force", opts.servers["*"] or {}, {
 				keys = {

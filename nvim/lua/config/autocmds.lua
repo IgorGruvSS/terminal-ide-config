@@ -8,7 +8,9 @@ local function check_external_changes()
 	end
 end
 
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+-- LazyVim already checks for external changes on FocusGained. Keep the extra
+-- checks while editing so autoread also notices updates without changing focus.
+vim.api.nvim_create_autocmd({ "BufEnter", "CursorHold", "CursorHoldI" }, {
 	group = external_changes,
 	callback = check_external_changes,
 	desc = "Verificar alterações externas nos arquivos",
