@@ -32,7 +32,7 @@ em uma instalação existente, execute novamente `./install.sh`.
 ## Estrutura
 
 ```text
-alacritty/  configuração do Alacritty e tema Aura
+alacritty/  configuração do Alacritty e tema Catppuccin
 bin/        launchers portáteis
 docs/       documentação organizada por contexto
 lazygit/    configuração versionada do LazyGit
@@ -72,9 +72,9 @@ O processo completo, incluindo dependências e primeira inicialização, está n
 | `lazygit` | Usar o LazyGit gerenciado pelo repositório |
 | `font <família>` | Testar temporariamente uma fonte com autocomplete no zsh |
 | `font save` | Salvar a fonte atual como padrão |
-| `alacritty-theme list` | Listar os pares de temas de teste para Alacritty e Neovim |
-| `alacritty-theme set <tema> <light\|dark>` | Trocar o tema pareado nos dois programas |
-| `alacritty-theme system` | Aplicar ao par escolhido a preferência claro/escuro do KDE |
+| `alacritty-theme list` | Listar o perfil Catppuccin disponível |
+| `alacritty-theme set <light\|dark>` | Selecionar Catppuccin Latte ou Macchiato |
+| `alacritty-theme system` | Aplicar claro/escuro conforme a preferência do KDE |
 
 ## Documentação
 

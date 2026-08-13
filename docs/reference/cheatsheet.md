@@ -76,7 +76,8 @@ Veja o [guia de teclado](keyboard.md) para roteamento e diagnóstico.
 | `Space fb` | Listar buffers abertos |
 | `Space fk` | Pesquisar atalhos registrados |
 | `Space w` | Salvar |
-| `Space q` | Fechar janela atual com confirmação |
+| `Space qs` / `Space qS` | Restaurar / escolher sessão |
+| `Space ql` / `Space qd` | Restaurar última / excluir sessão |
 | `H` / `L` | Buffer anterior / seguinte |
 | `Space bd` / `Space bo` | Fechar buffer atual / outros com segurança |
 | `Space gg` | Abrir LazyGit na raiz Git do arquivo atual |

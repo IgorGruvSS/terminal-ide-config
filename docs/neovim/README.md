@@ -17,8 +17,8 @@ vezes.
   auto-save, alterações externas e Markdown.
 - [Debug e SQL](debugging-sql.md): DAP para Go/Python e Dadbod sem segredos.
 - [Git dentro do Neovim](git.md): LazyGit, Diffview e Gitsigns.
-- [Aparência e temas](appearance.md): perfis sincronizados entre Alacritty,
-  Neovim e KDE, além de melhorias visuais.
+- [Aparência e temas](appearance.md): Catppuccin sincronizado entre Alacritty,
+  Neovim e KDE.
 - [Plugins](plugins.md): inventário completo e estrutura das configurações.
 - [Matriz da migração](migracao-lazyvim.md): equivalências e decisões de conflito.
 
@@ -57,7 +57,10 @@ vezes.
 | `Alt+D` / `Alt+Shift+D` | Adicionar / pular ocorrência multicursor |
 | `Space yp` | Copiar caminho absoluto do arquivo atual |
 | `Space yr` | Copiar caminho relativo do arquivo atual |
-| `Space q` | Fechar a janela atual |
+| `Space qs` | Restaurar uma sessão |
+| `Space qS` | Escolher uma sessão para restaurar |
+| `Space ql` | Restaurar a última sessão |
+| `Space qd` | Excluir uma sessão |
 
 ## O que cada camada faz
 

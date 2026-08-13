@@ -25,7 +25,7 @@ Os Extras habilitados são: nvim-cmp, Neo-tree, Telescope, DAP core, Go, Python,
 Vue/TypeScript, JSON, YAML, Markdown e SQL. Eles são imports, não cópias da
 configuração interna do LazyVim.
 
-## Recursos diretos
+## Diferenças locais e recursos principais
 
 | Plugin | Finalidade | Uso principal |
 | --- | --- | --- |
@@ -53,15 +53,16 @@ configuração interna do LazyVim.
 | `indent-blankline.nvim` | Guias de indentação |
 | `nvim-highlight-colors` | Prévia de cores |
 | `nvim-web-devicons` | Ícones |
-| Aura, Alabaster, Catppuccin, Flexoki, GitHub e Modus | Temas sincronizados com o Alacritty |
+| Catppuccin | Único tema; Latte no claro e Macchiato no escuro |
 
 ## Gerenciar sem adivinhar specs
 
 1. Procure primeiro em `:LazyExtras`; a interface registra o Extra oficial em
    `nvim/lazyvim.json`, que deve ser revisado e versionado.
-2. Para um plugin sem Extra, consulte a documentação oficial e crie um arquivo
-   pequeno em `nvim/lua/plugins/<responsabilidade>/`; não copie a configuração
-   inteira de outro starter.
+2. Para uma diferença que não é coberta por um Extra, consulte a documentação
+   oficial e crie um arquivo pequeno em
+   `nvim/lua/plugins/<responsabilidade>/`; não copie a configuração inteira do
+   LazyVim.
 3. Execute `nvim '+Lazy sync'`, revise `:Lazy` e versione a alteração do
    `nvim/lazy-lock.json`.
 4. Ferramentas externas aparecem em `:Mason`; o instalador resolve a lista

@@ -85,5 +85,6 @@ Fechar um buffer não precisa fechar a janela nem o processo.
 
 A linha superior mostra nome, modificação e diagnósticos. Ao fechar conteúdo
 modificado, escolha **Salvar**, **Descartar** ou **Cancelar**. Em um buffer sem
-nome, **Salvar** pede o caminho; cancelar preserva o texto. `Space q` fecha uma
-janela usando a confirmação nativa e nunca descarta conteúdo silenciosamente.
+nome, **Salvar** pede o caminho; cancelar preserva o texto. O grupo `Space q`
+fica reservado às sessões do LazyVim; use `Space qs`, `Space qS`, `Space ql` e
+`Space qd` para restaurar, escolher, restaurar a última e excluir sessões.

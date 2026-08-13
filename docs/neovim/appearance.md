@@ -16,18 +16,18 @@ Neovim a aplica ao iniciar ou ao receber foco.
 | Perfil | Neovim claro | Neovim escuro |
 | --- | --- | --- |
 | `catppuccin` | Catppuccin Latte | Catppuccin Macchiato |
-| `catppuccin` | Catppuccin Latte | Catppuccin Macchiato |
 
-Sem uma seleção salva, o Neovim usa Aura e preserva seu `background` atual.
+O perfil salvo contém somente o modo (`light` ou `dark`); o perfil Catppuccin é
+fixo. Sem uma seleção salva, o sincronizador usa o modo `light`.
 
 ## Trocar o tema
 
-Liste os perfis disponíveis e escolha um par:
+Liste o perfil disponível e escolha o modo:
 
 ```bash
 alacritty-theme list
-alacritty-theme set catppuccin dark
-alacritty-theme set catppuccin light
+alacritty-theme set dark
+alacritty-theme set light
 ```
 
 Para preservar o perfil escolhido e alternar somente conforme a preferência
@@ -41,20 +41,11 @@ O serviço instalado para o portal do KDE também executa essa sincronização
 quando a preferência do sistema muda. Dentro do Neovim, `:ThemeSync` força a
 leitura do estado e `:ThemeCurrent` informa a seleção atual.
 
-## Temas instalados
+## Tema instalado
 
-Além dos temas usados pelos perfis, Aura inclui variantes extras e Catppuccin
-também disponibiliza frappe e mocha. É possível testar qualquer esquema durante
-a sessão:
-
-
-```vim
-:colorscheme catppuccin-mocha
-:colorscheme catppuccin-macchiato
-```
-
-Essas trocas são temporárias: `:ThemeSync`, uma nova sessão ou retornar o foco
-ao Neovim restaura o perfil selecionado.
+Catppuccin é o único tema instalado e o sincronizador usa `catppuccin-latte`
+no modo claro e `catppuccin-macchiato` no modo escuro. Para reaplicar o estado
+salvo dentro do Neovim, use `:ThemeSync`; `:ThemeCurrent` mostra o modo atual.
 
 ## Melhorias visuais
 

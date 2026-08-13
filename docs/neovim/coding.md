@@ -76,7 +76,6 @@ meia página.
 | --- | --- |
 | `Space w` | Salvar |
 | `Space as` | Alternar auto-save, desativado ao iniciar |
-| `Space q` | Fechar a janela |
 | `Space bd` / `Space bo` | Fechar buffer atual / outros com decisão segura |
 | `Esc` | Limpar destaque da busca |
 
@@ -88,6 +87,10 @@ Quando outro editor ou agente muda um arquivo:
 
 O auto-save, quando ativado, usa debounce de 1,5 segundo e também salva ao sair
 do buffer ou perder foco.
+
+O grupo `<leader>q` é reservado às sessões do LazyVim: `Space qs` restaura uma
+sessão, `Space qS` escolhe uma, `Space ql` restaura a última e `Space qd` a
+exclui.
 
 ## Formatação
 
