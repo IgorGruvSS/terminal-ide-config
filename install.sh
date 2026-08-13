@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Empty CDPATH applies only to the cd command.
+# shellcheck disable=SC1007
 root_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 os_release="/etc/os-release"
 zshrc="$HOME/.zshrc"
@@ -114,6 +116,10 @@ for requirement in \
   'zsh:zsh' \
   'make:make' \
   'cc:gcc' \
+  'node:nodejs' \
+  'npm:npm' \
+  'python3:python3' \
+  'shellcheck:shellcheck' \
   'rg:ripgrep'; do
   command="${requirement%%:*}"
   package="${requirement#*:}"
@@ -121,6 +127,36 @@ for requirement in \
     missing_packages+=("$package")
   fi
 done
+
+if ! command -v fd >/dev/null 2>&1 && ! command -v fdfind >/dev/null 2>&1; then
+  missing_packages+=(fd-find)
+fi
+
+# Mason builds Go tools from their official modules and creates isolated Python
+# environments for Python tools. Package names differ between apt and dnf.
+if ! command -v go >/dev/null 2>&1; then
+  case "$ID" in
+    ubuntu | debian) missing_packages+=(golang-go) ;;
+    fedora) missing_packages+=(golang) ;;
+  esac
+fi
+
+if command -v python3 >/dev/null 2>&1 && \
+  ! python3 -c 'import venv, ensurepip' >/dev/null 2>&1; then
+  case "$ID" in
+    ubuntu | debian) missing_packages+=(python3-venv) ;;
+    fedora) missing_packages+=(python3-pip) ;;
+  esac
+fi
+
+# Dadbod needs a database client. SQLite provides a credential-free local
+# backend for smoke tests and remains useful when no remote database is set.
+if ! command -v sqlite3 >/dev/null 2>&1; then
+  case "$ID" in
+    ubuntu | debian) missing_packages+=(sqlite3) ;;
+    fedora) missing_packages+=(sqlite) ;;
+  esac
+fi
 
 if ((${#missing_packages[@]})); then
   if "$skip_system_packages"; then
@@ -250,7 +286,7 @@ install_tree_sitter() {
 install_nerd_font() {
   local archive_name download_url temp_dir archive
 
-  if fc-list --format '%{family}\n' | grep -Fxq "$font_family"; then
+  if fc-list --format '%{family}\n' | tr ',' '\n' | grep -Fx "$font_family" >/dev/null; then
     printf '%s is already installed.\n' "$font_family"
     return
   fi
@@ -313,8 +349,15 @@ install_tree_sitter
 install_nerd_font
 install_lazygit
 
-printf 'Synchronizing Neovim plugins...\n'
-"$root_dir/bin/nvim" --headless "+Lazy! sync" +qa
+printf 'Synchronizing Neovim plugins, parsers and tools...\n'
+# Keep one Neovim process alive until Mason finishes. On a fresh installation,
+# LazyVim may start Mason jobs while plugins are loading; exiting between these
+# phases would abort those jobs even though the following invocation retries.
+"$root_dir/bin/nvim" --headless \
+  "+Lazy! sync" \
+  "+lua if not require('config.treesitter').install_all() then vim.cmd('cquit') end" \
+  "+lua if not require('config.mason').install_all() then vim.cmd('cquit') end" \
+  +qa
 
 if ! grep -Fqx "$path_line" "$zshrc" 2>/dev/null; then
   {
@@ -355,6 +398,8 @@ fi
 printf 'Open a new zsh session, then run: alacritty-tmux\n'
 printf 'Shift+Enter inserts a newline in supported TUIs and interactive zsh.\n'
 printf 'The KDE application entry now uses this repository configuration.\n'
+# Portuguese documentation uses a literal typographic apostrophe.
+# shellcheck disable=SC1112
 printf 'Alacritty now follows KDE’s light/dark preference.\n'
 printf 'Neovim %s is available through: nvim\n' "$nvim_version"
 printf 'tree-sitter %s is available through: tree-sitter\n' "$tree_sitter_version"
