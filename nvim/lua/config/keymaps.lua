@@ -1,8 +1,6 @@
 local map = vim.keymap.set
 
 map("n", "<leader>w", "<cmd>write<CR>", { desc = "Salvar arquivo" })
-map("n", "<leader>e", "<cmd>Neotree toggle reveal<CR>", { desc = "Alternar Neo-tree" })
-map("n", "<leader>o", "<cmd>Neotree focus reveal<CR>", { desc = "Focar Neo-tree" })
 map("n", "<leader>bd", function()
 	require("config.buffers").close(0)
 end, { desc = "Fechar buffer com segurança" })
