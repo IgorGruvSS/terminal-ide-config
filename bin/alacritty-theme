@@ -7,57 +7,55 @@ state_dir="$root_dir/.local/state"
 state_file="$state_dir/alacritty-theme"
 active_theme="$theme_dir/active.toml"
 
-profiles=(catppuccin)
-
 usage() {
   cat <<'EOF'
 Usage: alacritty-theme <command> [arguments]
 
 Commands:
-  list                 List the available theme profiles and palettes.
-  current              Show the selected profile and color mode.
-  set <profile> <mode> Select a profile in light or dark mode.
-  system               Apply the KDE light/dark preference using the selected profile.
+  list                 List the Catppuccin palettes.
+  current              Show the selected Catppuccin mode.
+  set <mode>           Select Catppuccin in light or dark mode.
+  system               Apply the KDE light/dark preference.
 
 Examples:
-  alacritty-theme set catppuccin light
-  alacritty-theme set catppuccin dark
+  alacritty-theme set light
+  alacritty-theme set dark
   alacritty-theme system
 EOF
 }
 
-is_profile() {
-  local candidate="$1" profile
-  for profile in "${profiles[@]}"; do
-    [ "$candidate" = "$profile" ] && return 0
-  done
-  return 1
-}
-
-read_state() {
+read_mode() {
   if [ -r "$state_file" ]; then
-    sed -n '1,2p' "$state_file"
-  else
-    printf 'catppuccin\nlight\n'
+    local first second
+    first="$(sed -n '1p' "$state_file")"
+    second="$(sed -n '2p' "$state_file")"
+    if [ "$first" = catppuccin ]; then
+      first="$second"
+    fi
+    if [ "$first" = light ] || [ "$first" = dark ]; then
+      printf '%s\n' "$first"
+      return
+    fi
   fi
+  printf 'light\n'
 }
 
 palette_path() {
-  local profile="$1" mode="$2"
-  printf '%s\n' "$theme_dir/$profile-$mode.toml"
+  local mode="$1"
+  printf '%s\n' "$theme_dir/catppuccin-$mode.toml"
 }
 
 write_state() {
-  local profile="$1" mode="$2" temporary
+  local mode="$1" temporary
   mkdir -p "$state_dir"
   temporary="$(mktemp "$state_dir/.alacritty-theme.XXXXXX")"
-  printf '%s\n%s\n' "$profile" "$mode" > "$temporary"
+  printf '%s\n' "$mode" > "$temporary"
   mv "$temporary" "$state_file"
 }
 
 set_theme() {
-  local profile="$1" mode="$2" source temporary
-  source="$(palette_path "$profile" "$mode")"
+  local mode="$1" source temporary
+  source="$(palette_path "$mode")"
   if [ ! -r "$source" ]; then
     printf 'Palette unavailable: %s\n' "$source" >&2
     exit 1
@@ -66,27 +64,25 @@ set_theme() {
   temporary="$(mktemp "$theme_dir/.active.toml.XXXXXX")"
   cp "$source" "$temporary"
   mv "$temporary" "$active_theme"
-  write_state "$profile" "$mode"
-  printf 'Selected %s (%s). Alacritty reloads it automatically; Neovim syncs on startup or focus.\n' "$profile" "$mode"
+  write_state "$mode"
+  printf 'Selected Catppuccin (%s). Alacritty reloads it automatically; Neovim syncs on startup or focus.\n' "$mode"
 }
 
 case "${1-}" in
   list)
-    for profile in "${profiles[@]}"; do
-      printf '%s: light=%s, dark=%s\n' "$profile" \
-        "$(basename "$(palette_path "$profile" light)")" \
-        "$(basename "$(palette_path "$profile" dark)")"
-    done
+    printf 'catppuccin: light=%s, dark=%s\n' \
+      "$(basename "$(palette_path light)")" \
+      "$(basename "$(palette_path dark)")"
     ;;
   current)
-    read_state | paste -sd ' ' - | sed 's/^/Current: /'
+    printf 'Current: Catppuccin (%s)\n' "$(read_mode)"
     ;;
   set)
-    if [ "$#" -ne 3 ] || ! is_profile "$2" || { [ "$3" != light ] && [ "$3" != dark ]; }; then
+    if [ "$#" -ne 2 ] || { [ "$2" != light ] && [ "$2" != dark ]; }; then
       usage >&2
       exit 2
     fi
-    set_theme "$2" "$3"
+    set_theme "$2"
     ;;
   system)
     exec "$root_dir/bin/alacritty-theme-sync" --once

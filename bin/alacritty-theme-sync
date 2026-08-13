@@ -10,7 +10,7 @@ portal_path="/org/freedesktop/portal/desktop"
 portal_method="org.freedesktop.portal.Settings.Read"
 
 set_active_theme() {
-  local scheme profile mode
+  local scheme mode
 
   if ! scheme="$(gdbus call --session \
     --dest "$portal_dest" \
@@ -26,8 +26,7 @@ set_active_theme() {
     *) mode=light ;;            # Prefer light/no preference
   esac
 
-  profile="$("$root_dir/bin/alacritty-theme" current | sed -n 's/^Current: \([^ ]*\).*/\1/p')"
-  "$root_dir/bin/alacritty-theme" set "${profile:-catppuccin}" "$mode"
+  "$root_dir/bin/alacritty-theme" set "$mode"
 }
 
 if [ "${1-}" = "--once" ]; then

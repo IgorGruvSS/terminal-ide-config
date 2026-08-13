@@ -3,40 +3,41 @@
 local state_root = vim.env.XDG_STATE_HOME or vim.fn.fnamemodify(vim.fn.stdpath("state"), ":h")
 local state_file = state_root .. "/alacritty-theme"
 
-local profiles = { catppuccin = { light = "catppuccin-latte", dark = "catppuccin-macchiato" } }
+local schemes = { light = "catppuccin-latte", dark = "catppuccin-macchiato" }
 
-local last_state = nil
+local last_mode = nil
 
-local function read_state()
+local function read_mode()
 	local file = io.open(state_file, "r")
 	if not file then
 		return nil
 	end
 
-	local profile, mode = file:read("*l"), file:read("*l")
+	local first, second = file:read("*l"), file:read("*l")
 	file:close()
-	if profiles[profile] and (mode == "light" or mode == "dark") then
-		return profile, mode
+	-- Accept the former two-line `catppuccin`/mode state while users transition
+	-- to the single-mode selector.
+	local mode = first == "catppuccin" and second or first
+	if schemes[mode] then
+		return mode
 	end
 end
 
-local function apply(profile, mode)
-	local scheme = profiles[profile][mode]
+local function apply(mode)
 	vim.o.background = mode
-	vim.cmd.colorscheme(scheme)
-	last_state = profile .. ":" .. mode
+	vim.cmd.colorscheme(schemes[mode])
+	last_mode = mode
 end
 
 local function sync(force)
-	local profile, mode = read_state()
-	if not profile then
+	local mode = read_mode()
+	if not mode then
 		-- No terminal selection yet: preserve Neovim's native background default.
-		profile, mode = "catppuccin", vim.o.background
+		mode = vim.o.background
 	end
 
-	local state = profile .. ":" .. mode
-	if force or state ~= last_state then
-		apply(profile, mode)
+	if force or mode ~= last_mode then
+		apply(mode)
 	end
 end
 
@@ -45,16 +46,16 @@ vim.api.nvim_create_user_command("ThemeSync", function()
 end, { desc = "Sync Neovim colorscheme with Alacritty theme selection" })
 
 vim.api.nvim_create_user_command("ThemeCurrent", function()
-	local profile, mode = read_state()
-	if profile then
-		vim.notify(string.format("Alacritty profile: %s (%s)", profile, mode))
+	local mode = read_mode()
+	if mode then
+		vim.notify(string.format("Catppuccin mode: %s", mode))
 	else
-		vim.notify("Alacritty profile unset; using Neovim background fallback")
+		vim.notify("Catppuccin mode unset; using Neovim background fallback")
 	end
-end, { desc = "Show the active terminal theme profile" })
+end, { desc = "Show the active Catppuccin mode" })
 
--- config.autocmds is loaded from LazyVim's VeryLazy callback. Applying a
--- colorscheme inline here can re-enter lazy.nvim while that callback is still
+-- This module loads immediately after the LazyVim bootstrap. Applying a
+-- colorscheme inline can re-enter lazy.nvim while that bootstrap is still
 -- completing, especially while the TUI is resolving its background color.
 -- Run the initial sync on the next event-loop turn; explicit commands and
 -- later FocusGained events remain immediate.
