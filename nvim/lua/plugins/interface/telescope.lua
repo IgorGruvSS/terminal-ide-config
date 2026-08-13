@@ -1,35 +1,25 @@
+local function telescope(method, opts)
+	return function()
+		opts = vim.tbl_deep_extend("force", { cwd = LazyVim.root() }, opts or {})
+		require("telescope.builtin")[method](opts)
+	end
+end
+
 return {
 	{
 		"nvim-telescope/telescope.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
+		keys = {
+			{ "<leader>gc", false },
+			{ "<leader>ff", telescope("find_files"), desc = "Buscar arquivos" },
 			{
-				"nvim-telescope/telescope-fzf-native.nvim",
-				build = "make",
+				"<leader>fg",
+				telescope("live_grep", { additional_args = { "--fixed-strings" } }),
+				desc = "Buscar texto literal (ripgrep)",
 			},
+			{ "<leader>fr", telescope("live_grep"), desc = "Buscar texto regex (ripgrep)" },
+			{ "<leader>fb", telescope("buffers", { cwd = nil }), desc = "Listar buffers abertos" },
+			{ "<leader>fh", telescope("help_tags", { cwd = nil }), desc = "Buscar ajuda" },
+			{ "<leader>fk", telescope("keymaps", { cwd = nil }), desc = "Buscar atalhos" },
 		},
-
-		config = function()
-			require("telescope").setup({
-				extensions = {
-					fzf = {
-						fuzzy = false,
-						override_generic_sorter = true,
-						override_file_sorter = true,
-						case_mode = "smart_case",
-					},
-				},
-			})
-
-			require("telescope").load_extension("fzf")
-
-			local builtin = require("telescope.builtin")
-
-			vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find files" })
-			vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Find text" })
-			vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Find buffers" })
-			vim.keymap.set("n", "<leader>fh", builtin.help_tags, { desc = "Find help" })
-			vim.keymap.set("n", "<leader>fk", builtin.keymaps, { desc = "Find keymaps" })
-		end,
 	},
 }

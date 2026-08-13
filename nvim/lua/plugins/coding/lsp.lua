@@ -1,172 +1,82 @@
+local function local_vue_server(root_dir)
+	if not root_dir then
+		return nil
+	end
+	local package = vim.fs.joinpath(root_dir, "node_modules", "@vue", "language-server")
+	return vim.uv.fs_stat(package) and package or nil
+end
+
 return {
 	{
 		"neovim/nvim-lspconfig",
-		lazy = false,
-
-		config = function()
-			vim.diagnostic.config({
+		opts = function(_, opts)
+			opts.diagnostics = vim.tbl_deep_extend("force", opts.diagnostics or {}, {
 				severity_sort = true,
-				signs = true,
 				underline = true,
 				update_in_insert = false,
-				virtual_text = {
-					prefix = ">>",
-					source = "if_many",
-					spacing = 4,
-				},
-				float = {
-					border = "rounded",
-					source = "always",
+				virtual_text = { prefix = ">>", source = "if_many", spacing = 4 },
+				float = { border = "rounded", source = "always" },
+			})
+
+			opts.servers = opts.servers or {}
+			opts.servers["*"] = vim.tbl_deep_extend("force", opts.servers["*"] or {}, {
+				keys = {
+					{ "gd", vim.lsp.buf.definition, desc = "Ir para definição" },
+					{ "gr", vim.lsp.buf.references, desc = "Listar referências" },
+					{ "K", vim.lsp.buf.hover, desc = "Mostrar documentação" },
+					{ "<leader>ca", vim.lsp.buf.code_action, desc = "Ação de código", has = "codeAction" },
 				},
 			})
 
-			vim.api.nvim_create_autocmd("LspAttach", {
-				callback = function(event)
-					local opts = { buffer = event.buf }
-					local function map(lhs, rhs, desc)
-						vim.keymap.set("n", lhs, rhs, vim.tbl_extend("force", opts, { desc = desc }))
+			-- Prefer the project-pinned Vue language tools. Vue 2 requires the
+			-- maintained 3.0.x line; projects without a local copy use Mason's current version.
+			local vtsls = opts.servers.vtsls or {}
+			local previous_before_init = vtsls.before_init
+			vtsls.before_init = function(params, config)
+				if previous_before_init then
+					previous_before_init(params, config)
+				end
+				local package = local_vue_server(config.root_dir)
+				if not package then
+					return
+				end
+				local settings = config.settings and config.settings.vtsls
+				local tsserver = settings and settings.tsserver
+				for _, plugin in ipairs((tsserver and tsserver.globalPlugins) or {}) do
+					if plugin.name == "@vue/typescript-plugin" then
+						plugin.location = package
 					end
-
-					map("gd", vim.lsp.buf.definition, "Go to definition")
-					map("gr", vim.lsp.buf.references, "Go to references")
-					map("K", vim.lsp.buf.hover, "Show hover")
-					map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
-					map("<leader>ca", vim.lsp.buf.code_action, "Code action")
-					map("[d", vim.diagnostic.goto_prev, "Previous diagnostic")
-					map("]d", vim.diagnostic.goto_next, "Next diagnostic")
-					map("<leader>d", vim.diagnostic.open_float, "Show diagnostic")
-				end,
-			})
-
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-
-			local has_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
-			if has_cmp_lsp then
-				capabilities = cmp_lsp.default_capabilities(capabilities)
-			end
-
-			local function enable_if_executable(server, executable, opts)
-				if vim.fn.executable(executable) == 1 then
-					opts = vim.tbl_deep_extend("force", { capabilities = capabilities }, opts or {})
-					vim.lsp.config(server, opts)
-
-					vim.lsp.enable(server)
 				end
 			end
+			opts.servers.vtsls = vtsls
 
-			enable_if_executable("gopls", "gopls")
-			enable_if_executable("lua_ls", "lua-language-server", {
-				settings = {
-					Lua = {
-						diagnostics = {
-							globals = { "vim" },
-						},
-					},
-				},
-			})
-			enable_if_executable("ts_ls", "typescript-language-server", {
-				-- Normalize Neovim's stdio handles to regular pipes before handing
-				-- them to the Node-based language server.
-				cmd = { "sh", "-c", "tee /dev/null | typescript-language-server --stdio | tee /dev/null" },
-				init_options = {
-					tsserver = {
-						-- Global npm installs managed by NVM are outside the project tree.
-						-- Pass the executable explicitly so typescript-language-server can
-						-- resolve the matching global TypeScript package.
-						path = vim.fn.exepath("tsserver"),
-					},
-				},
-				filetypes = {
-					"javascript",
-					"javascriptreact",
-					"typescript",
-					"typescriptreact",
-					"vue",
-				},
-				before_init = function(params, config)
-					if not config.root_dir then
-						return
-					end
-
-					local vue_language_server = vim.fs.joinpath(
-						config.root_dir,
-						"node_modules",
-						"@vue",
-						"language-server"
-					)
-					if not vim.uv.fs_stat(vue_language_server) then
-						return
-					end
-
-					params.initializationOptions = params.initializationOptions or {}
-					params.initializationOptions.plugins = {
-						{
-							name = "@vue/typescript-plugin",
-							location = vue_language_server,
-							languages = { "vue" },
-						},
-					}
-				end,
-			})
-
-			-- Vue 2 projects need to pin the legacy Vue Language Server in their
-			-- own dependencies. Prefer that binary over a newer global Volar.
-			vim.lsp.config("vue_ls", {
-				capabilities = capabilities,
-				on_init = function(client)
-					client.handlers["tsserver/request"] = function(_, result, context)
-						local function forward_request(attempt)
-							local ts_client = vim.lsp.get_clients({ bufnr = context.bufnr, name = "ts_ls" })[1]
-							if not ts_client then
-								if attempt < 100 then
-									vim.defer_fn(function()
-										forward_request(attempt + 1)
-									end, 100)
-								else
-									vim.notify(
-										"TypeScript LSP did not attach to the Vue buffer.",
-										vim.log.levels.ERROR
-									)
-								end
-								return
-							end
-
-							local request = unpack(result)
-							local id, command, payload = unpack(request)
-							ts_client:exec_cmd({
-								title = "vue_request_forward",
-								command = "typescript.tsserverRequest",
-								arguments = { command, payload },
-							}, { bufnr = context.bufnr }, function(_, response)
-								client:notify("tsserver/response", { { id, response and response.body } })
-							end)
-						end
-
-						forward_request(1)
-					end
-				end,
-				cmd = function(dispatchers, config)
-					local command = "vue-language-server"
-					if config.root_dir then
-						local local_command = vim.fs.joinpath(config.root_dir, "node_modules", ".bin", command)
-						if vim.fn.executable(local_command) == 1 then
-							command = local_command
-						end
-					end
-					return vim.lsp.rpc.start({ command, "--stdio" }, dispatchers)
-				end,
-			})
-			vim.lsp.enable("vue_ls")
-
-			if vim.fn.executable("basedpyright") == 1 then
-				vim.lsp.config("basedpyright", { capabilities = capabilities })
-				vim.lsp.enable("basedpyright")
-			else
-				enable_if_executable("pyright", "pyright")
+			local vue_ls = opts.servers.vue_ls or {}
+			vue_ls.cmd = function(dispatchers, config)
+				local package = local_vue_server(config.root_dir)
+				local command = package and vim.fs.joinpath(package, "bin", "vue-language-server.js")
+				if command and vim.uv.fs_stat(command) then
+					return vim.lsp.rpc.start({ vim.fn.exepath("node"), command, "--stdio" }, dispatchers)
+				end
+				return vim.lsp.rpc.start({ "vue-language-server", "--stdio" }, dispatchers)
 			end
+			opts.servers.vue_ls = vue_ls
 
-			enable_if_executable("jsonls", "vscode-json-language-server")
-			enable_if_executable("yamlls", "yaml-language-server")
+			-- Keep pyright installed and configured as a quiet fallback. It is
+			-- enabled only when basedpyright is unavailable, so both never attach.
+			opts.servers.pyright = opts.servers.pyright or {}
+			opts.servers.pyright.enabled = true
+			opts.setup = opts.setup or {}
+			opts.setup.pyright = function(_, server_opts)
+				vim.lsp.config("pyright", server_opts)
+				if vim.fn.executable("basedpyright-langserver") ~= 1 then
+					vim.lsp.enable("pyright")
+				end
+				return true
+			end
 		end,
+	},
+	{
+		"mason-org/mason.nvim",
+		opts = { ensure_installed = { "pyright" } },
 	},
 }

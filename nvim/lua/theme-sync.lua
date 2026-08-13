@@ -3,14 +3,7 @@
 local state_root = vim.env.XDG_STATE_HOME or vim.fn.fnamemodify(vim.fn.stdpath("state"), ":h")
 local state_file = state_root .. "/alacritty-theme"
 
-local profiles = {
-	aura = { light = "PaperColor", dark = "aura-dark" },
-	alabaster = { light = "alabaster", dark = "PaperColor" },
-	modus = { light = "modus_operandi", dark = "modus_vivendi" },
-	flexoki = { light = "flexoki-light", dark = "flexoki-dark" },
-	github = { light = "github_light", dark = "github_dark" },
-	catppuccin = { light = "catppuccin-latte", dark = "catppuccin-macchiato" },
-}
+local profiles = { catppuccin = { light = "catppuccin-latte", dark = "catppuccin-macchiato" } }
 
 local last_state = nil
 
@@ -38,7 +31,7 @@ local function sync(force)
 	local profile, mode = read_state()
 	if not profile then
 		-- No terminal selection yet: preserve Neovim's native background default.
-		profile, mode = "aura", vim.o.background
+		profile, mode = "catppuccin", vim.o.background
 	end
 
 	local state = profile .. ":" .. mode
@@ -60,7 +53,14 @@ vim.api.nvim_create_user_command("ThemeCurrent", function()
 	end
 end, { desc = "Show the active terminal theme profile" })
 
-sync(true)
+-- config.autocmds is loaded from LazyVim's VeryLazy callback. Applying a
+-- colorscheme inline here can re-enter lazy.nvim while that callback is still
+-- completing, especially while the TUI is resolving its background color.
+-- Run the initial sync on the next event-loop turn; explicit commands and
+-- later FocusGained events remain immediate.
+vim.schedule(function()
+	sync(true)
+end)
 
 vim.api.nvim_create_autocmd("FocusGained", {
 	callback = function()

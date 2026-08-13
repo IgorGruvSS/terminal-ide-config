@@ -2,3 +2,9 @@
 .cache/
 .local/
 .state/
+
+# Project-local LazyVim configuration may contain Dadbod connection URLs.
+.lazy.lua
+.env
+.env.*
+!.env.example
