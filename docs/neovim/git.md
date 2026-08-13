@@ -27,10 +27,14 @@ O fluxo completo está no [guia do LazyGit](../git/lazygit.md).
 
 | Atalho global | Ação |
 | --- | --- |
-| `Space do` | Working tree contra index |
-| `Space df` | `origin/develop...HEAD`, incluindo mudanças locais |
-| `Space dh` | Histórico do arquivo atual |
-| `Space dc` | Fechar Diffview |
+| `Space go` | Working tree contra index |
+| `Space gf` | `origin/develop...HEAD`, incluindo mudanças locais |
+| `Space gh` | Histórico do arquivo atual |
+| `Space gc` | Fechar Diffview |
+
+O antigo grupo `Space d...` passou a pertencer ao debugger. Esta mudança foi
+deliberada: `Space go/gf/gh/gc` mantém o Diffview agrupado com Git e libera os
+atalhos oficiais de DAP.
 
 Para outra base, use
 `:DiffviewOpen origin/main...HEAD --imply-local`.

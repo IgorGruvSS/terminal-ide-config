@@ -2,112 +2,122 @@
 
 ## Índice
 
-- [Responsabilidades](#responsibilities)
-- [Iniciar e recuperar](#start-and-recover)
+- [Responsabilidades](#responsabilidades)
+- [Iniciar e recuperar](#iniciar-e-recuperar)
 - [Atalhos do terminal](#terminal)
 - [tmux](#tmux)
 - [Neovim](#neovim)
 - [LazyGit](#lazygit)
 
-## Responsibilities
+## Responsabilidades
 
-- **Alacritty:** window, font, scrollback, and the theme profile synchronized
-  with Neovim and KDE.
-- **tmux:** sessions, windows, panes, navigation, and resize.
-- **Neovim:** editing, LSP, completion, Neo-tree, and Git tools.
+- **Alacritty:** janela, fonte, histórico e tema sincronizado com Neovim/KDE.
+- **tmux:** sessões, janelas, painéis, navegação e redimensionamento.
+- **Neovim:** edição, LSP, completion, debug, SQL, Neo-tree e ferramentas Git.
 
-Alacritty owns the `Shift+Enter` translation. The pane and window shortcuts are
-handled by tmux itself.
+O Alacritty traduz `Shift+Enter`; o tmux trata seus próprios painéis e janelas.
 
-## Start and recover
+## Iniciar e recuperar
 
 ```bash
-alacritty-tmux          # default session: main
-alacritty-tmux work     # named session
+alacritty-tmux          # sessão padrão: main
+alacritty-tmux trabalho # sessão nomeada
 ```
 
-Detach with `Ctrl+B d`; run the same command later to reconnect while the tmux server is alive.
+Desconecte com `Ctrl+B d`; execute o mesmo comando depois para reconectar.
 
 ## Terminal
 
-| Shortcut | Action |
+| Atalho | Ação |
 | --- | --- |
-| `Shift+Enter` | Insert a newline without submitting in supported TUIs and zsh |
-| `Enter` | Submit the message or execute the command |
+| `Shift+Enter` | Inserir nova linha sem enviar em TUIs compatíveis e no zsh |
+| `Enter` | Enviar a mensagem ou executar o comando |
 
-See the [keyboard guide](keyboard.md) for the complete routing and diagnosis.
+Veja o [guia de teclado](keyboard.md) para roteamento e diagnóstico.
 
 ## tmux
 
-### Direct shortcuts
+### Atalhos diretos
 
-| Shortcut | Action |
+| Atalho | Ação |
 | --- | --- |
-| `Alt` + arrow | Focus the pane in that direction |
-| `Alt+Shift` + arrow | Create a pane in that direction |
-| `Ctrl+Alt` + arrow | Resize the pane in that direction |
-| `Ctrl+Shift+Left` | Previous tmux window |
-| `Ctrl+Shift+Right` | Next tmux window |
-| `Alt+Z` | Zoom/restore the current pane |
+| `Alt` + seta | Focar painel na direção |
+| `Alt+Shift` + seta | Criar painel na direção |
+| `Ctrl+Alt` + seta | Redimensionar painel |
+| `Ctrl+Shift+Left` | Janela tmux anterior |
+| `Ctrl+Shift+Right` | Próxima janela tmux |
+| `Alt+Z` | Ampliar/restaurar painel atual |
 
-### Prefix fallback
+### Alternativas com prefixo
 
-| Keys after `Ctrl+B` | Action |
+| Teclas após `Ctrl+B` | Ação |
 | --- | --- |
-| `|` / `-` | Horizontal / vertical split |
-| `h j k l` | Focus pane |
-| `H J K L` | Resize pane |
-| `z` | Zoom/restore pane |
-| `x` | Close the current pane (asks for confirmation) |
-| `c` | New window |
-| `n` / `p` | Next / previous window |
-| `,` | Rename the current window |
-| `&` | Close the current window (asks for confirmation) |
-| `$` | Rename the current session |
-| `r` | Reload tmux configuration |
+| `|` / `-` | Split horizontal / vertical |
+| `h j k l` | Focar painel |
+| `H J K L` | Redimensionar painel |
+| `z` | Ampliar/restaurar painel |
+| `x` | Fechar painel atual com confirmação |
+| `c` | Nova janela |
+| `n` / `p` | Próxima janela / anterior |
+| `,` | Renomear janela atual |
+| `&` | Fechar janela atual com confirmação |
+| `$` | Renomear sessão atual |
+| `r` | Recarregar configuração do tmux |
 
 ## Neovim
 
-| Shortcut | Action |
+| Atalho | Ação |
 | --- | --- |
-| `Space e` | Toggle Neo-tree |
-| `Space o` | Focus Neo-tree |
-| `Space ff` | Find files |
-| `Space fg` | Find text in the project |
-| `Space fb` | Find open buffers |
-| `Space fk` | Search registered keymaps |
-| `Space w` | Save |
-| `Space q` | Close current window |
-| `Space gg` | Open LazyGit at the current file's Git root |
-| `Space do` | Open working-tree diff |
-| `Space df` | Open branch diff against `origin/develop` |
-| `Space dh` | Open current file history |
-| `Space dc` | Close diff view |
-| `Space as` | Toggle auto-save (disabled at startup) |
-| `Ctrl+Space` | Open completion |
+| `Space e` | Alternar Neo-tree |
+| `Space o` | Focar Neo-tree |
+| `Space ff` | Buscar arquivos |
+| `Space fg` | Buscar texto **literal** (`foo(` não precisa de escape) |
+| `Space fr` | Buscar texto como **regex ripgrep** |
+| `Space fb` | Listar buffers abertos |
+| `Space fk` | Pesquisar atalhos registrados |
+| `Space w` | Salvar |
+| `Space q` | Fechar janela atual com confirmação |
+| `H` / `L` | Buffer anterior / seguinte |
+| `Space bd` / `Space bo` | Fechar buffer atual / outros com segurança |
+| `Space gg` | Abrir LazyGit na raiz Git do arquivo atual |
+| `Space go` | Abrir diff do working tree |
+| `Space gf` | Diff contra `origin/develop...HEAD --imply-local` |
+| `Space gh` | Histórico do arquivo atual |
+| `Space gc` | Fechar Diffview |
+| `Space as` | Alternar auto-save (desativado ao iniciar) |
+| `Ctrl+Space` | Abrir completion |
+| `Alt+D` / `Alt+Shift+D` | Adicionar / pular ocorrência multicursor |
+| `Space db` / `Space dB` | Breakpoint normal / condicional |
+| `Space dc` | Iniciar ou continuar debug |
+| `Space dO` / `Space di` / `Space do` | Step over / into / out |
+| `Space dP` / `Space dt` | Pausar / encerrar debug |
+| `Space du` / `Space dr` | UI / REPL do debugger |
+| `Space D` | Abrir ou fechar DBUI SQL |
 
-Files changed by external editors or agents are checked automatically. Clean
-buffers reload with a notification; buffers with local changes show a conflict
-warning instead of being overwritten.
+Arquivos alterados por outros editores ou agentes são verificados
+automaticamente. Buffers limpos recarregam com notificação; alterações locais
+geram aviso de conflito e não são sobrescritas.
 
-For the plugin inventory, workflows, theme variants, and contextual controls,
-read the [Neovim documentation index](../neovim/README.md).
+Ao fechar buffer modificado, escolha salvar, descartar ou cancelar. Um buffer
+sem nome pede um caminho antes de salvar; cancelar mantém seu conteúdo.
+
+Veja o [índice do Neovim](../neovim/README.md) para plugins, fluxos e temas.
 
 ## LazyGit
 
-Open it with `Space gg` inside Neovim or run `lazygit` inside a repository.
+Abra com `Space gg` no Neovim ou execute `lazygit` em um repositório.
 
-| Shortcut | Action |
+| Atalho | Ação |
 | --- | --- |
-| `h j k l` / arrows | Navigate panels and items |
-| `1` / `2` / `3` / `4` / `5` | Status / files / branches / commits / stash |
-| `Space` | Stage/unstage or select the contextual item |
-| `Enter` | Open the selected item or diff |
-| `c` in files | Commit staged changes |
+| `h j k l` / setas | Navegar em painéis e itens |
+| `1` / `2` / `3` / `4` / `5` | Status / arquivos / branches / commits / stash |
+| `Space` | Stage/unstage ou selecionar item contextual |
+| `Enter` | Abrir item ou diff selecionado |
+| `c` em arquivos | Commit das mudanças em stage |
 | `p` / `P` | Pull / push |
-| `f` in remotes | Fetch |
-| `?` | Show contextual shortcuts |
-| `q` | Close LazyGit |
+| `f` em remotes | Fetch |
+| `?` | Mostrar atalhos contextuais |
+| `q` | Fechar LazyGit |
 
-Read the [LazyGit guide](../git/lazygit.md) for stage by hunk, log, branches,
-rebase and safety notes.
+Leia o [guia do LazyGit](../git/lazygit.md) para stage por hunk, log, branches,
+rebase e notas de segurança.

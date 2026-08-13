@@ -8,6 +8,7 @@
 - [O que o instalador altera](#o-que-o-instalador-altera)
 - [Primeira execução](#primeira-execução)
 - [Atualizar uma instalação](#atualizar-uma-instalação)
+- [Diagnóstico e rollback da migração LazyVim](#diagnóstico-e-rollback-da-migração-lazyvim)
 
 ## Pré-requisitos
 
@@ -17,8 +18,9 @@ detecta a distribuição e instala somente os pacotes ausentes. É preciso ter:
 - conexão com a internet para baixar componentes versionados;
 - permissão para usar `sudo` quando faltarem pacotes do sistema.
 
-O `ripgrep` também é instalado como dependência: ele fornece o comando `rg`,
-usado pela busca de conteúdo (`Space f g`) do Telescope no Neovim.
+O instalador também garante `ripgrep`, `fd`, Node/npm, Go, Python com `venv` e
+`pip`, SQLite e ShellCheck. Eles sustentam Telescope, servidores e ferramentas
+do Mason, os adaptadores DAP e o teste SQL local.
 
 No Ubuntu, o repositório `universe` deve estar habilitado para instalar o
 Alacritty. Em instalações padrão ele já vem habilitado. Se o `apt` informar que
@@ -45,7 +47,9 @@ O instalador também:
 - baixa Neovim 0.12.4 e tree-sitter 0.26.11 para o runtime do repositório quando o Neovim do sistema
   for ausente ou antigo para esta configuração;
 - instala a JetBrainsMono Nerd Font no diretório de fontes do usuário;
-- baixa a versão fixada do LazyGit e valida os checksums dos downloads.
+- baixa a versão fixada do LazyGit e valida os checksums dos downloads;
+- sincroniza o lockfile do LazyVim e espera a instalação declarativa das
+  ferramentas no Mason.
 
 Para máquinas em que os pacotes são administrados externamente, use
 `./install.sh --skip-system-packages`. O comando falha sem alterar a instalação
@@ -70,8 +74,8 @@ linha que carrega `shell/zsh/terminal-ide.zsh`. Ele não substitui tema, plugins
 nem outras configurações do Zsh.
 
 Ao final, a entrada de aplicativo do KDE aponta para o Alacritty configurado
-pelo repositório. Rode `nvim '+Lazy sync'` uma vez para baixar os plugins do
-Neovim e use `alacritty-tmux` como ponto de entrada diário.
+pelo repositório. Plugins e ferramentas do Neovim já foram sincronizados; use
+`alacritty-tmux` como ponto de entrada diário.
 
 ## O que o instalador altera
 
@@ -87,10 +91,11 @@ Ele não cria symlinks nem copia configurações para `~/.config`.
 
 ## Primeira execução
 
-Sincronize os plugins bloqueados do Neovim:
+O instalador já sincroniza plugins e ferramentas. Para conferir a instalação:
 
 ```bash
-nvim '+Lazy sync'
+nvim '+Lazy'
+nvim '+Mason'
 ```
 
 Depois abra o ambiente:
@@ -111,3 +116,33 @@ nvim '+Lazy sync'
 
 Abra um novo shell com `exec zsh`. Veja também o
 [cheatsheet diário](../reference/cheatsheet.md).
+
+## Diagnóstico e rollback da migração LazyVim
+
+Use sempre o launcher autocontido:
+
+```bash
+bin/nvim --headless '+Lazy! sync' +qa
+bin/nvim '+checkhealth'
+```
+
+O backup anterior à migração está em
+`.state/backups/nvim-pre-lazyvim-20260812-183439.tar.gz`, com SHA-256
+`f87fd15eef36068fed025c64c061c7490988763093b1a1a7ce64e7401fe19517`.
+Ele inclui a configuração `nvim/`, o lockfile e as alterações locais que já
+existiam. O diretório `.state/` é ignorado pelo Git.
+
+Para rollback recuperável, feche o Neovim, valide primeiro o checksum, mova a
+configuração nova para outro nome e extraia o backup na raiz:
+
+```bash
+sha256sum .state/backups/nvim-pre-lazyvim-20260812-183439.tar.gz
+mv nvim nvim.lazyvim-review
+tar -xzf .state/backups/nvim-pre-lazyvim-20260812-183439.tar.gz -C .
+bin/nvim --headless '+Lazy! sync' +qa
+```
+
+Isso preserva a versão migrada em `nvim.lazyvim-review`; não apague nem o
+backup nem esse diretório antes de validar o ambiente em uso real. Para voltar
+à migração, mova o `nvim/` restaurado para outro nome e renomeie
+`nvim.lazyvim-review` para `nvim`.

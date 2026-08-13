@@ -15,10 +15,16 @@ quiser voltar a um buffer aberto.
 | Atalho | Ação |
 | --- | --- |
 | `Space ff` | Procurar arquivos |
-| `Space fg` | Procurar texto no projeto |
+| `Space fg` | Procurar texto **literal** no projeto (`--fixed-strings`) |
+| `Space fr` | Procurar texto como **regex ripgrep** |
 | `Space fb` | Listar buffers |
 | `Space fh` | Pesquisar ajuda |
 | `Space fk` | Pesquisar atalhos |
+
+As duas buscas usam smart case e a raiz do projeto calculada pelo LazyVim.
+`Space fg` procura `foo(` exatamente, sem escapar o parêntese. `Space fr`
+aceita, por exemplo, `foo\([^)]*\)` como expressão regular. `/` permanece a
+busca regex nativa apenas no buffer atual.
 
 ## Controles do Telescope
 
@@ -63,3 +69,21 @@ rapidamente a um arquivo conhecido, prefira Telescope.
 | `R` / `q` / `?` | Atualizar / fechar / ajuda |
 
 Arquivos ocultos e ignorados pelo Git continuam visíveis por configuração.
+
+## Buffers, janelas e abas
+
+Um **buffer** é o texto de um arquivo (ou um texto ainda sem nome); uma
+**janela** é uma vista de um buffer; uma **aba** organiza uma ou mais janelas.
+Fechar um buffer não precisa fechar a janela nem o processo.
+
+| Atalho | Ação |
+| --- | --- |
+| `H` / `L` | Buffer anterior / seguinte |
+| `Space fb` | Listar buffers, inclusive modificados |
+| `Space bd` | Fechar o buffer atual com segurança |
+| `Space bo` | Fechar os outros buffers com segurança |
+
+A linha superior mostra nome, modificação e diagnósticos. Ao fechar conteúdo
+modificado, escolha **Salvar**, **Descartar** ou **Cancelar**. Em um buffer sem
+nome, **Salvar** pede o caminho; cancelar preserva o texto. `Space q` fecha uma
+janela usando a confirmação nativa e nunca descarta conteúdo silenciosamente.

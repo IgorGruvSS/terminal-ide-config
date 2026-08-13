@@ -24,9 +24,11 @@
 - [Índice do Neovim](neovim/README.md)
 - [Descoberta e navegação](neovim/navigation.md)
 - [Edição e inteligência de código](neovim/coding.md)
+- [Debug Go/Python e SQL](neovim/debugging-sql.md)
 - [Git dentro do Neovim](neovim/git.md)
 - [Aparência e temas](neovim/appearance.md)
 - [Inventário e organização dos plugins](neovim/plugins.md)
+- [Matriz da migração para LazyVim](neovim/migracao-lazyvim.md)
 
 ## Git e GitHub
 

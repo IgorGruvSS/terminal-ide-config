@@ -15,11 +15,7 @@ Neovim a aplica ao iniciar ou ao receber foco.
 
 | Perfil | Neovim claro | Neovim escuro |
 | --- | --- | --- |
-| `aura` | PaperColor | Aura Dark |
-| `alabaster` | Alabaster | PaperColor |
-| `modus` | Modus Operandi | Modus Vivendi |
-| `flexoki` | Flexoki Light | Flexoki Dark |
-| `github` | GitHub Light | GitHub Dark |
+| `catppuccin` | Catppuccin Latte | Catppuccin Macchiato |
 | `catppuccin` | Catppuccin Latte | Catppuccin Macchiato |
 
 Sem uma seleção salva, o Neovim usa Aura e preserva seu `background` atual.
@@ -30,8 +26,8 @@ Liste os perfis disponíveis e escolha um par:
 
 ```bash
 alacritty-theme list
-alacritty-theme set flexoki dark
-alacritty-theme set github light
+alacritty-theme set catppuccin dark
+alacritty-theme set catppuccin light
 ```
 
 Para preservar o perfil escolhido e alternar somente conforme a preferência
@@ -54,7 +50,7 @@ a sessão:
 
 ```vim
 :colorscheme catppuccin-mocha
-:colorscheme aura-dark
+:colorscheme catppuccin-macchiato
 ```
 
 Essas trocas são temporárias: `:ThemeSync`, uma nova sessão ou retornar o foco

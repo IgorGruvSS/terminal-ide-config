@@ -18,7 +18,7 @@ canônicos, launchers, documentação e estado local ficam neste repositório.
 ```text
 Alacritty → janela, renderização, teclado e tema (sincronizado com o KDE)
 tmux      → sessões persistentes, windows e panes
-Neovim    → edição, LSP, completion, navegação e ferramentas Git
+Neovim    → LazyVim, edição, LSP, completion, debug, SQL e ferramentas Git
 LazyGit   → status, diff, stage, commit, branches, rebase e remotes
 ```
 
@@ -68,7 +68,7 @@ O processo completo, incluindo dependências e primeira inicialização, está n
 | `alacritty-tmux [sessão]` | Abrir o Alacritty e conectar/criar uma sessão tmux |
 | `alacritty` | Usar o Alacritty com a configuração do repositório |
 | `tmux` | Usar o tmux com a configuração do repositório |
-| `nvim` | Usar o Neovim e seu estado autocontido |
+| `nvim` | Usar o LazyVim e seu estado XDG autocontido |
 | `lazygit` | Usar o LazyGit gerenciado pelo repositório |
 | `font <família>` | Testar temporariamente uma fonte com autocomplete no zsh |
 | `font save` | Salvar a fonte atual como padrão |
@@ -88,4 +88,9 @@ Edite os arquivos neste repositório e versione as mudanças normalmente.
 
 - recarregar tmux: `Ctrl+B`, depois `r`;
 - recarregar a integração do zsh: `source shell/zsh/terminal-ide.zsh`;
-- sincronizar plugins do Neovim: `nvim '+Lazy sync'`.
+- sincronizar plugins do Neovim: `nvim '+Lazy sync'`;
+- sincronizar plugins e ferramentas declaradas: `./install.sh`.
+
+O launcher `bin/nvim` é parte da configuração: ele aponta configuração, plugins,
+cache e estado para este repositório. Execute os diagnósticos e o Neovim diário
+por `nvim`/`bin/nvim`, não chamando diretamente outro binário.

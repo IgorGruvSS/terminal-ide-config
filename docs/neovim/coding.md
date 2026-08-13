@@ -4,6 +4,7 @@
 
 - [LSP](#lsp)
 - [Autocompletar](#autocompletar)
+- [Múltiplos cursores](#múltiplos-cursores)
 - [Salvar e alterações externas](#salvar-e-alterações-externas)
 - [Formatação](#formatação)
 - [Markdown](#markdown)
@@ -25,17 +26,22 @@ Os atalhos existem quando um servidor conseguiu se conectar ao buffer.
 | --- | --- |
 | Go | `gopls` |
 | Lua | `lua-language-server` |
-| JavaScript / TypeScript / Vue | `typescript-language-server` e `vue-language-server` |
+| JavaScript / TypeScript / Vue | `vtsls` e `vue-language-server` |
 | Python | `basedpyright` ou `pyright` |
 | JSON | `vscode-json-language-server` |
 | YAML | `yaml-language-server` |
 
-Em projetos Vue 2, instale e fixe `vue-language-server` nas dependências do
-próprio projeto; essa cópia tem precedência sobre uma instalação global. O
-servidor TypeScript também encaminha os pedidos do Vue e pode localizar um
-`tsserver` instalado globalmente pelo NVM.
+LazyVim e Mason fornecem a instalação global padrão. Quando um projeto possui
+`node_modules/@vue/language-server`, a configuração usa essa cópia
+automaticamente tanto no servidor Vue quanto no plugin TypeScript do vtsls.
+Isso mantém projetos atuais simples e permite que um projeto Vue 2 fixe a linha
+compatível `@vue/language-server@~3.0.0`, sem trocar manualmente a configuração
+do editor. TypeScript e Prettier fixados no projeto também têm precedência.
 
 Use `:checkhealth vim.lsp` se um atalho semântico não responder.
+Mason mantém os dois servidores Python disponíveis; `basedpyright` é o
+preferido e `pyright` só é habilitado quando o primeiro executável não existe,
+evitando dois clientes concorrentes no mesmo buffer.
 
 ## Autocompletar
 
@@ -49,6 +55,21 @@ O nvim-cmp combina LSP, palavras do buffer e caminhos.
 | `Shift+Tab` | Item anterior |
 | `Ctrl+E` | Cancelar |
 
+As fontes incluem LSP, snippets, caminhos e palavras dos buffers.
+
+## Múltiplos cursores
+
+| Atalho | Ação |
+| --- | --- |
+| `Alt+D` | Adicionar cursor na próxima ocorrência da palavra/seleção |
+| `Alt+Shift+D` | Pular a próxima ocorrência e procurar a seguinte |
+| `Esc` | Encerrar/limpar os múltiplos cursores quando a camada está ativa |
+
+Selecione texto no modo visual ou deixe o cursor sobre uma palavra, adicione as
+ocorrências e edite normalmente. Fora da camada multicursor, `Esc` continua
+limpando o destaque da busca. `Ctrl+D` não foi remapeado e continua descendo
+meia página.
+
 ## Salvar e alterações externas
 
 | Atalho | Ação |
@@ -56,6 +77,7 @@ O nvim-cmp combina LSP, palavras do buffer e caminhos.
 | `Space w` | Salvar |
 | `Space as` | Alternar auto-save, desativado ao iniciar |
 | `Space q` | Fechar a janela |
+| `Space bd` / `Space bo` | Fechar buffer atual / outros com decisão segura |
 | `Esc` | Limpar destaque da busca |
 
 Quando outro editor ou agente muda um arquivo:
@@ -74,13 +96,15 @@ O Conform formata ao salvar quando o executável necessário está disponível.
 | Arquivos | Formatadores |
 | --- | --- |
 | Lua | `stylua` |
-| Go | `goimports`, depois `gofmt` |
+| Go | `goimports`, com fallback para `gofmt` |
 | JavaScript, TypeScript, JSX, TSX e Vue | `prettier` |
 | JSON, YAML e Markdown | `prettier` |
 | Python | `black` |
 
 Use `:ConformInfo` para diagnóstico. O Prettier formata por arquivo temporário,
 o que também mantém compatibilidade com projetos Vue 2 que usam Prettier 1.x.
+O auto-save dispara antes do evento normal de escrita; o format-on-save ocorre
+uma vez nessa escrita, sem criar uma segunda gravação ou loop.
 
 ## Markdown
 
