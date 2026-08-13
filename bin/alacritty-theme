@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+root_dir="$(CDPATH=; cd -- "$(dirname -- "$0")/.." && pwd)"
 theme_dir="$root_dir/alacritty/themes"
 state_dir="$root_dir/.local/state"
 state_file="$state_dir/alacritty-theme"
 active_theme="$theme_dir/active.toml"
 
-profiles=(aura alabaster modus flexoki github catppuccin)
+profiles=(catppuccin)
 
 usage() {
   cat <<'EOF'
@@ -20,8 +20,8 @@ Commands:
   system               Apply the KDE light/dark preference using the selected profile.
 
 Examples:
-  alacritty-theme set alabaster light
-  alacritty-theme set modus dark
+  alacritty-theme set catppuccin light
+  alacritty-theme set catppuccin dark
   alacritty-theme system
 EOF
 }
@@ -38,20 +38,12 @@ read_state() {
   if [ -r "$state_file" ]; then
     sed -n '1,2p' "$state_file"
   else
-    printf 'aura\nlight\n'
+    printf 'catppuccin\nlight\n'
   fi
 }
 
 palette_path() {
   local profile="$1" mode="$2"
-  if [ "$profile" = aura ]; then
-    case "$mode" in
-      light) printf '%s\n' "$theme_dir/aura-light-theme.toml" ;;
-      dark) printf '%s\n' "$theme_dir/aura-theme.toml" ;;
-    esac
-    return
-  fi
-
   printf '%s\n' "$theme_dir/$profile-$mode.toml"
 }
 

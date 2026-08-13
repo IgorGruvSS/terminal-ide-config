@@ -4,7 +4,7 @@ set -euo pipefail
 # Keep Alacritty's palette aligned with the desktop preference advertised by
 # the XDG Settings portal. KDE Plasma exposes this through xdg-desktop-portal.
 
-root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+root_dir="$(CDPATH=; cd -- "$(dirname -- "$0")/.." && pwd)"
 portal_dest="org.freedesktop.portal.Desktop"
 portal_path="/org/freedesktop/portal/desktop"
 portal_method="org.freedesktop.portal.Settings.Read"
@@ -27,7 +27,7 @@ set_active_theme() {
   esac
 
   profile="$("$root_dir/bin/alacritty-theme" current | sed -n 's/^Current: \([^ ]*\).*/\1/p')"
-  "$root_dir/bin/alacritty-theme" set "${profile:-aura}" "$mode"
+  "$root_dir/bin/alacritty-theme" set "${profile:-catppuccin}" "$mode"
 }
 
 if [ "${1-}" = "--once" ]; then
