@@ -42,3 +42,11 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
 	end,
 	desc = "Notificar recarga de arquivo alterado externamente",
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "vue", "javascript", "typescript" },
+	callback = function()
+		vim.opt_local.includeexpr = "substitute(v:fname, '^@/', 'src/', '')"
+		vim.opt_local.suffixesadd:append(".vue")
+	end,
+})
