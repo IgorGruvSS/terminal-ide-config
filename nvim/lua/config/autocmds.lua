@@ -50,3 +50,18 @@ vim.api.nvim_create_autocmd("FileType", {
 		vim.opt_local.suffixesadd:append(".vue")
 	end,
 })
+
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "sql", "mysql", "plsql" },
+	callback = function(args)
+		-- Python DB-API placeholders such as `%(name)s` can make the SQL
+		-- Treesitter parser lose the surrounding statement. Keep its structural
+		-- captures and fill parsing gaps with Neovim's tolerant SQL syntax rules.
+		vim.schedule(function()
+			if vim.api.nvim_buf_is_valid(args.buf) then
+				vim.bo[args.buf].syntax = vim.bo[args.buf].filetype
+			end
+		end)
+	end,
+	desc = "Complementar highlights Treesitter em SQL híbrido",
+})

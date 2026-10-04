@@ -15,7 +15,7 @@
 ```text
 plugins/
 ├── coding/     ajustes de LSP, completion, formatação e Treesitter
-├── editing/    auto-save e múltiplos cursores
+├── editing/    auto-save, múltiplos cursores e treinamento Vim
 ├── git/        atalhos adicionais do Diffview
 ├── interface/  navegação e melhorias visuais da interface
 └── themes/     esquemas de cores
@@ -30,16 +30,22 @@ configuração interna do LazyVim.
 | Plugin | Finalidade | Uso principal |
 | --- | --- | --- |
 | `telescope.nvim` | Busca | `Space f...` |
-| `neo-tree.nvim` | Árvore e arquivos | `Space e`, `Space o` |
+| `neo-tree.nvim` | Arquivos, buffers e Git na lateral | `Space e`, `Space o`, `Space be` |
 | `nvim-lspconfig` | Servidores de linguagem | `gd`, `gr`, `K`, `Space r...` |
 | `nvim-cmp` | Autocomplete | `Ctrl+Space`, `Tab`, `Enter` |
+| `tree-sitter-language-injection.nvim` | Highlight de linguagens em strings | Marque a string com `sql` |
+| `nvim-lint` | Lint SQL por arquivo | `sqlfluff` |
 | `diffview.nvim` | Diff e histórico | `Space g...` |
 | Snacks LazyGit | LazyGit flutuante | `Space gg` |
-| `auto-save.nvim` | Auto-save opcional | `Space as` |
+| `auto-save.nvim` | Auto-save automático (3 s) | `Space as` |
 | `conform.nvim` | Formatação ao salvar | `:ConformInfo` |
+| `csvview.nvim` | Visualização e navegação em CSV | `:CsvViewToggle` |
 | `render-markdown.nvim` | Markdown enriquecido | `:RenderMarkdown ...` |
 | `which-key.nvim` | Descoberta de atalhos | Pressione `Space` |
 | `multicursor.nvim` | Edição de ocorrências simultâneas | `Alt+D` |
+| `VimTeacher` | Lições estruturadas adaptadas aos atalhos ativos | `:VimTeacher` |
+| `vim-be-better` | Jogos e desafios progressivos de edição | `:VimBeBetter` |
+| `hardtime.nvim` | Dicas sobre movimentos ineficientes durante o uso | `:Hardtime ...` |
 | `nvim-dap` / `nvim-dap-ui` | Debug Go e Python | `Space d...` |
 | `vim-dadbod-ui` | Consultas SQL | `Space D...` |
 

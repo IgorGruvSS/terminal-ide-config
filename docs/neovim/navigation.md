@@ -47,6 +47,11 @@ rapidamente a um arquivo conhecido, prefira Telescope.
 | --- | --- |
 | `Space e` | Abrir ou fechar a árvore |
 | `Space o` | Focar a árvore |
+| `Space be` | Abrir a lista de buffers no Neo-tree |
+
+O topo do painel possui o seletor `Files | Buffers | Git`, inspirado no
+AstroNvim. `Files` mostra a árvore do projeto, `Buffers` os arquivos abertos e
+`Git` as mudanças do repositório.
 
 ## Controles do Neo-tree
 
@@ -69,6 +74,7 @@ rapidamente a um arquivo conhecido, prefira Telescope.
 | `R` / `q` / `?` | Atualizar / fechar / ajuda |
 
 Arquivos ocultos e ignorados pelo Git continuam visíveis por configuração.
+Arquivos abertos em splits permanecem em seus respectivos painéis.
 
 ## Buffers, janelas e abas
 
@@ -83,8 +89,10 @@ Fechar um buffer não precisa fechar a janela nem o processo.
 | `Space bd` | Fechar o buffer atual com segurança |
 | `Space bo` | Fechar os outros buffers com segurança |
 
-A linha superior mostra nome, modificação e diagnósticos. Ao fechar conteúdo
-modificado, escolha **Salvar**, **Descartar** ou **Cancelar**. Em um buffer sem
-nome, **Salvar** pede o caminho; cancelar preserva o texto. O grupo `Space q`
-fica reservado às sessões do LazyVim; use `Space qs`, `Space qS`, `Space ql` e
-`Space qd` para restaurar, escolher, restaurar a última e excluir sessões.
+A fonte `Buffers` do Neo-tree mantém os arquivos abertos em uma área separada
+dos splits. A barra horizontal do `bufferline.nvim` fica desativada. Ao fechar
+conteúdo modificado, escolha **Salvar**, **Descartar** ou **Cancelar**. Em um
+buffer sem nome, **Salvar** pede o caminho; cancelar preserva o texto. O grupo
+`Space q` fica reservado às sessões do LazyVim; use `Space qs`, `Space qS`,
+`Space ql` e `Space qd` para restaurar, escolher, restaurar a última e excluir
+sessões.

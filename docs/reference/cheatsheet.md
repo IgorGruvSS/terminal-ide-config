@@ -22,9 +22,12 @@ O Alacritty traduz `Shift+Enter`; o tmux trata seus próprios painéis e janelas
 ```bash
 alacritty-tmux          # sessão padrão: main
 alacritty-tmux trabalho # sessão nomeada
+codex-tmux              # sessão independente: codex
 ```
 
 Desconecte com `Ctrl+B d`; execute o mesmo comando depois para reconectar.
+O launcher prepara a sessão tmux; inicie `codex` dentro dela quando quiser
+abrir o CLI.
 
 ## Terminal
 
@@ -70,6 +73,7 @@ Veja o [guia de teclado](keyboard.md) para roteamento e diagnóstico.
 | --- | --- |
 | `Space e` | Alternar Neo-tree |
 | `Space o` | Focar Neo-tree |
+| `Space be` | Listar buffers no Neo-tree |
 | `Space ff` | Buscar arquivos |
 | `Space fg` | Buscar texto **literal** (`foo(` não precisa de escape) |
 | `Space fr` | Buscar texto como **regex ripgrep** |
@@ -85,7 +89,7 @@ Veja o [guia de teclado](keyboard.md) para roteamento e diagnóstico.
 | `Space gf` | Diff contra `origin/develop...HEAD --imply-local` |
 | `Space gh` | Histórico do arquivo atual |
 | `Space gc` | Fechar Diffview |
-| `Space as` | Alternar auto-save (desativado ao iniciar) |
+| `Space as` | Alternar auto-save (ativado ao iniciar, debounce de 3 s) |
 | `Ctrl+Space` | Abrir completion |
 | `Alt+D` / `Alt+Shift+D` | Adicionar / pular ocorrência multicursor |
 | `Space db` / `Space dB` | Breakpoint normal / condicional |
@@ -98,6 +102,14 @@ Veja o [guia de teclado](keyboard.md) para roteamento e diagnóstico.
 Arquivos alterados por outros editores ou agentes são verificados
 automaticamente. Buffers limpos recarregam com notificação; alterações locais
 geram aviso de conflito e não são sobrescritas.
+
+Comandos úteis sem atalho dedicado:
+
+| Comando | Ação |
+| --- | --- |
+| `:CsvViewToggle` | Alternar visualização tabular em CSV |
+| `:VimTeacher` | Abrir lições estruturadas de Vim |
+| `:VimBeBetter` | Abrir exercícios de edição |
 
 Ao fechar buffer modificado, escolha salvar, descartar ou cancelar. Um buffer
 sem nome pede um caminho antes de salvar; cancelar mantém seu conteúdo.

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Codex appends one JSON argument to the command configured by `notify`.
+# Keep the message intentionally short: the full response remains in the TUI.
+
+if [ "$#" -ne 1 ]; then
+  printf 'codex-notify expects the JSON payload supplied by Codex.\n' >&2
+  exit 2
+fi
+
+# Empty CDPATH applies only to the cd command.
+# shellcheck disable=SC1007
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+payload="$1"
+
+readarray -t details < <(python3 - "$payload" <<'PY'
+import json
+import os
+import sys
+
+try:
+    event = json.loads(sys.argv[1])
+except (IndexError, json.JSONDecodeError):
+    raise SystemExit(2)
+
+if event.get("type") != "agent-turn-complete":
+    raise SystemExit(0)
+
+cwd = event.get("cwd")
+project = os.path.basename(cwd.rstrip("/")) if isinstance(cwd, str) and cwd else "terminal"
+print(project)
+PY
+)
+
+if [ "${#details[@]}" -ne 1 ]; then
+  exit 0
+fi
+
+exec "$root_dir/bin/terminal-alert" "Codex concluiu: ${details[0]}" "A resposta está pronta no terminal."

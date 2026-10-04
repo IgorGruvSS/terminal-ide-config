@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: notify-run <description> -- <command> [arguments...]
+
+Runs a command and sends a desktop notification when it exits. The command's
+exit status is preserved even if the notification service is unavailable.
+
+Examples:
+  notify-run "Sincronização do ambiente" -- ./scripts/sync.sh
+  notify-run "Build do frontend" -- npm run build
+EOF
+}
+
+if [ "$#" -lt 3 ] || [ "$2" != -- ]; then
+  usage >&2
+  exit 2
+fi
+
+# Empty CDPATH applies only to the cd command.
+# shellcheck disable=SC1007
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+description="$1"
+shift 2
+
+set +e
+"$@"
+status=$?
+set -e
+
+if [ "$status" -eq 0 ]; then
+  "$root_dir/bin/terminal-alert" "Concluído" "$description" >/dev/null 2>&1 || true
+else
+  "$root_dir/bin/terminal-alert" --urgency critical "Falhou (código $status)" "$description" >/dev/null 2>&1 || true
+fi
+
+exit "$status"

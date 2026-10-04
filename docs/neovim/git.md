@@ -52,5 +52,9 @@ Para outra base, use
 ## Gitsigns
 
 Gitsigns marca na coluna lateral as linhas adicionadas, alteradas e removidas.
-Ainda não há atalhos customizados; a possível evolução está no
+Ao parar o cursor em uma linha versionada, também mostra ao fim dela o autor,
+a data relativa e a mensagem do commit. Linhas ainda não commitadas são
+identificadas como não confirmadas.
+
+Ainda não há atalhos customizados; outras possíveis evoluções estão no
 [estudo de integrações futuras](../git/future-integrations.md).

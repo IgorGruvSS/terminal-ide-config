@@ -1,6 +1,6 @@
 return {
 	{
-		"akinsho/bufferline.nvim",
+		"folke/flash.nvim",
 		enabled = false,
 	},
 }

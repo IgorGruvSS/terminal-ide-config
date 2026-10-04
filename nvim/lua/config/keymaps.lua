@@ -1,5 +1,12 @@
 local map = vim.keymap.set
 
+-- Keep selection editing close to graphical editors while preserving Vim's
+-- operator grammar in Normal mode. Flash is disabled in plugins/editing/flash.lua,
+-- so `s` is also the native substitute command outside Visual mode.
+map("x", "s", '"_c', { desc = "Substituir seleção sem copiar" })
+map("x", "d", '"_d', { desc = "Apagar seleção sem copiar" })
+map("x", "x", "d", { desc = "Cortar seleção" })
+
 map("n", "<leader>w", "<cmd>write<CR>", { desc = "Salvar arquivo" })
 map("n", "<leader>bd", function()
 	require("config.buffers").close(0)

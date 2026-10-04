@@ -3,8 +3,11 @@
 ## Índice
 
 - [LSP](#lsp)
+- [Edição básica](#edição-básica)
 - [Autocompletar](#autocompletar)
+- [SQL em strings](#sql-em-strings)
 - [Múltiplos cursores](#múltiplos-cursores)
+- [CSV](#csv)
 - [Salvar e alterações externas](#salvar-e-alterações-externas)
 - [Formatação](#formatação)
 - [Markdown](#markdown)
@@ -43,6 +46,41 @@ Mason mantém os dois servidores Python disponíveis; `basedpyright` é o
 preferido e `pyright` só é habilitado quando o primeiro executável não existe,
 evitando dois clientes concorrentes no mesmo buffer.
 
+Textos e linhas virtuais de diagnóstico ficam ocultos por padrão. Os
+diagnósticos continuam ativos (sinais e sublinhados permanecem) e `Space d`
+mostra a mensagem sob o cursor. Inlay hints, incluindo tipos inferidos pelo
+servidor Python, também iniciam ocultos; `Space uh` permite alterná-los durante
+a sessão.
+
+## Edição básica
+
+O Flash está desativado para preservar `s` como substituição. No modo Normal,
+os comandos seguem a gramática nativa do Vim: um operador recebe um movimento
+ou objeto de texto.
+
+| Comando | Ação no modo Normal |
+| --- | --- |
+| `s` | Apagar o caractere e entrar em Insert (`cl`) |
+| `d{movimento}` | Apagar o trecho e guardá-lo; exemplo: `dw` |
+| `c{movimento}` | Apagar o trecho, guardá-lo e entrar em Insert; exemplo: `ciw` |
+| `x` | Apagar/guardar o caractere sob o cursor (`dl`) |
+| `y{movimento}` | Copiar; exemplo: `yw` |
+| `p` / `P` | Colar depois / antes |
+
+No modo Visual, esta configuração adota ações parecidas com editores gráficos:
+
+| Tecla | Ação sobre a seleção |
+| --- | --- |
+| `s` | Substituir sem sobrescrever o texto copiado |
+| `d` | Apagar sem sobrescrever o texto copiado |
+| `x` | Cortar |
+| `y` | Copiar |
+
+No Vim puro, `d`, `c`, `s` e `x` escrevem em registradores; por isso todos
+podem parecer “cortar”. A diferença principal é o que selecionam e se entram
+ou não no modo Insert. O registrador especial `"_` usado pelos atalhos visuais
+de `d` e `s` descarta o texto e preserva o conteúdo que será colado com `p`.
+
 ## Autocompletar
 
 O nvim-cmp combina LSP, palavras do buffer e caminhos.
@@ -57,6 +95,54 @@ O nvim-cmp combina LSP, palavras do buffer e caminhos.
 
 As fontes incluem LSP, snippets, caminhos e palavras dos buffers.
 
+## SQL em strings
+
+O `tree-sitter-language-injection.nvim` aplica o parser SQL dentro de strings
+marcadas em arquivos Python, Go, JavaScript e TypeScript, inclusive em blocos
+`<script>` de arquivos Vue. Em Python, coloque a anotação imediatamente acima
+da atribuição:
+
+```python
+# sql
+query = """
+SELECT id, name
+FROM users
+WHERE active = TRUE
+"""
+```
+
+Em JavaScript e TypeScript, use o mesmo formato com `// sql`:
+
+```typescript
+// sql
+const query = `
+  SELECT id, name
+  FROM users
+  WHERE active = TRUE
+`;
+```
+
+Em Go, coloque `/* sql */` imediatamente antes da string:
+
+```go
+query := /* sql */ `
+  SELECT id, name
+  FROM users
+  WHERE active = TRUE
+`
+```
+
+Uma template string JavaScript/TypeScript também pode carregar a marcação
+por dentro, iniciando seu conteúdo com `--sql`. A anotação é intencional: ela
+evita tratar qualquer string comum como SQL. O recurso fornece parsing e
+highlight; autocomplete, validação e formatação SQL dentro da string exigem
+integrações adicionais.
+
+Arquivos SQL usam `sqlfluff` para lint e formatação. O lint roda pelo
+`nvim-lint`, preservando o diretório do arquivo para encontrar configurações
+locais do SQLFluff. A formatação usa o dialeto PostgreSQL como padrão e passa
+`--stdin-filename` para respeitar configurações por projeto.
+
 ## Múltiplos cursores
 
 | Atalho | Ação |
@@ -70,12 +156,27 @@ ocorrências e edite normalmente. Fora da camada multicursor, `Esc` continua
 limpando o destaque da busca. `Ctrl+D` não foi remapeado e continua descendo
 meia página.
 
+## CSV
+
+`csvview.nvim` fornece visualização estruturada e navegação por campos em
+arquivos CSV e similares.
+
+| Comando ou tecla | Ação |
+| --- | --- |
+| `:CsvViewToggle` | Alternar visualização tabular no buffer atual |
+| `:CsvViewEnable` / `:CsvViewDisable` | Ativar / desativar explicitamente |
+| `Tab` / `Shift+Tab` | Campo seguinte / anterior |
+| `Enter` / `Shift+Enter` | Linha seguinte / anterior, mantendo a coluna |
+| `if` / `af` | Text objects de campo interno / campo completo |
+
+Linhas iniciadas por `#` ou `//` são tratadas como comentários.
+
 ## Salvar e alterações externas
 
 | Atalho | Ação |
 | --- | --- |
 | `Space w` | Salvar |
-| `Space as` | Alternar auto-save, desativado ao iniciar |
+| `Space as` | Alternar auto-save, ativado ao iniciar |
 | `Space bd` / `Space bo` | Fechar buffer atual / outros com decisão segura |
 | `Esc` | Limpar destaque da busca |
 
@@ -85,8 +186,12 @@ Quando outro editor ou agente muda um arquivo:
 - buffers com alterações locais não são sobrescritos e mostram um conflito;
 - `:checktime` permanece disponível como verificação manual.
 
-O auto-save, quando ativado, usa debounce de 1,5 segundo e também salva ao sair
-do buffer ou perder foco.
+Os buffers permanecem abertos ao trocar de arquivo, sem limpeza automática. A
+fonte `Buffers` no Neo-tree fornece uma lista dedicada; a barra horizontal do
+`bufferline.nvim` fica desativada.
+
+O auto-save inicia ativado, usa debounce de 3 segundos e também salva ao sair do
+buffer ou perder foco.
 
 O grupo `<leader>q` é reservado às sessões do LazyVim: `Space qs` restaura uma
 sessão, `Space qS` escolhe uma, `Space ql` restaura a última e `Space qd` a
@@ -102,6 +207,7 @@ O Conform formata ao salvar quando o executável necessário está disponível.
 | Go | `goimports`, com fallback para `gofmt` |
 | JavaScript, TypeScript, JSX, TSX e Vue | `prettier` |
 | JSON, YAML e Markdown | `prettier` |
+| SQL | `sqlfluff` |
 | Python | `black` |
 
 Use `:ConformInfo` para diagnóstico. O Prettier formata por arquivo temporário,

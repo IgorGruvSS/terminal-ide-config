@@ -6,7 +6,8 @@ vim.g.lazyvim_picker = "telescope"
 vim.g.lazyvim_cmp = "nvim-cmp"
 vim.g.lazyvim_python_lsp = "basedpyright"
 
-vim.opt.relativenumber = false
+vim.opt.relativenumber = true
+vim.opt.cursorline = true
 vim.opt.scrolloff = 8
 vim.opt.autoread = true
 vim.opt.updatetime = 1000

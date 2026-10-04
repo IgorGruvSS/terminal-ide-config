@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: terminal-alert [--urgency low|normal|critical] <title> <message>
+
+Send a desktop notification and play a short sound through the Linux audio session.
+
+Examples:
+  terminal-alert "Build concluído" "O pacote foi publicado localmente."
+  terminal-alert --urgency critical "Backup falhou" "Verifique o log."
+EOF
+}
+
+urgency=normal
+case "${1-}" in
+  --urgency)
+    if [ "$#" -ne 4 ] || { [ "$2" != low ] && [ "$2" != normal ] && [ "$2" != critical ]; }; then
+      usage >&2
+      exit 2
+    fi
+    urgency="$2"
+    shift 2
+    ;;
+esac
+
+if [ "$#" -ne 2 ]; then
+  usage >&2
+  exit 2
+fi
+
+if ! command -v notify-send >/dev/null 2>&1; then
+  printf 'notify-send is unavailable. Install libnotify-bin (Ubuntu/Debian) or libnotify (Fedora).\n' >&2
+  exit 1
+fi
+
+notify-send --app-name='Terminal IDE' --urgency="$urgency" "$1" "$2"
+
+if [ "${TERMINAL_ALERT_SOUND:-1}" != 0 ]; then
+  sound_file=""
+  for candidate in \
+    /usr/share/sounds/freedesktop/stereo/message-new-instant.oga \
+    /usr/share/sounds/freedesktop/stereo/message.oga \
+    /usr/share/sounds/oxygen/stereo/message.ogg; do
+    if [ -r "$candidate" ]; then
+      sound_file="$candidate"
+      break
+    fi
+  done
+
+  sound_player="$(command -v paplay || command -v pw-play || true)"
+  if [ -n "$sound_player" ] && [ -n "$sound_file" ]; then
+    "$sound_player" "$sound_file" >/dev/null 2>&1 </dev/null &
+  fi
+fi

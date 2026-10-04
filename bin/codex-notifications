@@ -1,0 +1,149 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Empty CDPATH applies only to the cd command.
+# shellcheck disable=SC1007
+root_dir="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
+codex_dir="${CODEX_HOME:-$HOME/.codex}"
+config_file="$codex_dir/config.toml"
+
+usage() {
+  cat <<'EOF'
+Usage: codex-notifications <install|status|test>
+
+Commands:
+  install  Add the missing Codex notification settings without replacing values
+           already configured by the user.
+  status   Show the configuration file and the configured notification values.
+  test     Send a desktop notification using the Codex notifier.
+EOF
+}
+
+has_root_notify() {
+  awk '
+    BEGIN { in_root = 1 }
+    /^[[:space:]]*\[/ { in_root = 0 }
+    /^[[:space:]]*notify[[:space:]]*=/ && in_root { found = 1 }
+    END { exit !found }
+  ' "$config_file"
+}
+
+has_tui_table() {
+  awk '/^[[:space:]]*\[tui\][[:space:]]*(#.*)?$/ { found = 1 } END { exit !found }' "$config_file"
+}
+
+has_tui_key() {
+  local key="$1"
+
+  awk -v key="$key" '
+    /^[[:space:]]*\[/ {
+      in_tui = ($0 ~ /^[[:space:]]*\[tui\][[:space:]]*(#.*)?$/)
+      next
+    }
+    in_tui && $0 ~ "^[[:space:]]*" key "[[:space:]]*=" { found = 1 }
+    END { exit !found }
+  ' "$config_file"
+}
+
+install_settings() {
+  local escaped_root notify_line temporary
+  local -a missing_tui_settings=()
+
+  mkdir -p "$codex_dir"
+  touch "$config_file"
+
+  escaped_root="${root_dir//\\/\\\\}"
+  escaped_root="${escaped_root//\"/\\\"}"
+  notify_line="notify = [\"$escaped_root/bin/codex-notify\"]"
+
+  if ! has_root_notify; then
+    temporary="$(mktemp "$codex_dir/.config.toml.XXXXXX")"
+    awk -v notify_line="$notify_line" '
+      !inserted && /^[[:space:]]*\[/ {
+        print ""
+        print "# terminal-ide-config Codex desktop notification"
+        print notify_line
+        inserted = 1
+      }
+      { print }
+      END {
+        if (!inserted) {
+          print ""
+          print "# terminal-ide-config Codex desktop notification"
+          print notify_line
+        }
+      }
+    ' "$config_file" > "$temporary"
+    mv "$temporary" "$config_file"
+  fi
+
+  has_tui_key notifications || missing_tui_settings+=("notifications = [\"approval-requested\", \"plan-mode-prompt\"]")
+  has_tui_key notification_condition || missing_tui_settings+=("notification_condition = \"always\"")
+  has_tui_key notification_method || missing_tui_settings+=("notification_method = \"auto\"")
+
+  if ((${#missing_tui_settings[@]} == 0)); then
+    return
+  fi
+
+  if ! has_tui_table; then
+    {
+      printf '\n# Terminal alerts for prompts and approval requests.\n[tui]\n'
+      printf '%s\n' "${missing_tui_settings[@]}"
+    } >> "$config_file"
+    return
+  fi
+
+  temporary="$(mktemp "$codex_dir/.config.toml.XXXXXX")"
+  awk -v additions="$(printf '%s\n' "${missing_tui_settings[@]}")" '
+    function write_additions(  count, lines, item) {
+      if (!written) {
+        count = split(additions, lines, "\\n")
+        for (item = 1; item <= count; item++) {
+          if (lines[item] != "") print lines[item]
+        }
+        written = 1
+      }
+    }
+    /^[[:space:]]*\[tui\][[:space:]]*(#.*)?$/ { in_tui = 1; print; next }
+    in_tui && /^[[:space:]]*\[/ { write_additions(); in_tui = 0 }
+    { print }
+    END { if (in_tui) write_additions() }
+  ' "$config_file" > "$temporary"
+  mv "$temporary" "$config_file"
+}
+
+status() {
+  if [ ! -f "$config_file" ]; then
+    printf 'Codex configuration not found: %s\n' "$config_file"
+    return 1
+  fi
+
+  printf 'Codex configuration: %s\n' "$config_file"
+  awk '
+    BEGIN { in_root = 1 }
+    /^[[:space:]]*\[/ {
+      in_root = 0
+      in_tui = ($0 ~ /^[[:space:]]*\[tui\][[:space:]]*(#.*)?$/)
+    }
+    (in_root && /^[[:space:]]*notify[[:space:]]*=/) ||
+      (in_tui && /^[[:space:]]*(notifications|notification_condition|notification_method)[[:space:]]*=/) { print }
+  ' "$config_file"
+}
+
+case "${1-}" in
+  install)
+    if [ "$#" -ne 1 ]; then usage >&2; exit 2; fi
+    install_settings
+    status
+    ;;
+  status)
+    if [ "$#" -ne 1 ]; then usage >&2; exit 2; fi
+    status
+    ;;
+  test)
+    if [ "$#" -ne 1 ]; then usage >&2; exit 2; fi
+    exec "$root_dir/bin/codex-notify" '{"type":"agent-turn-complete","cwd":"terminal-ide-config"}'
+    ;;
+  -h|--help|help|'') usage ;;
+  *) usage >&2; exit 2 ;;
+esac

@@ -13,7 +13,7 @@ as decisões que evitam conflitos com seus defaults.
 | Vue local obrigatório | Vue/vtsls oficial, preferindo `@vue/language-server` local quando existe | Menos gestão; Vue 2 pode fixar `~3.0.0`, demais projetos usam Mason |
 | `basedpyright`, fallback manual para `pyright` | Ambos no Mason; somente basedpyright ativa quando disponível | Fallback preservado sem dois clientes concorrentes |
 | Conform manual | Conform do LazyVim + tabela local preservada | Stylua, goimports/gofmt, Prettier e Black mantidos |
-| Auto-save desativado, 1,5 s | Mesmo plugin e eventos + formatação explícita antes da escrita | Corrigida a primeira escrita sem criar loop |
+| Auto-save desativado, 1,5 s | Mesmo plugin e eventos, agora ativado com 3 s + formatação explícita antes da escrita | Corrigida a primeira escrita sem criar loop |
 | Treesitter e parsers manuais | Core/Extras + lista complementar efetiva | Cobertura preservada, incluindo SQL, Vue e Markdown inline |
 | Render Markdown, Gitsigns, indentação, ícones e WhichKey specs próprias | Recursos do core/Extras | Mesmos plugins, sem specs locais duplicadas |
 | LazyGit por plugin dedicado | Integração LazyGit do Snacks/LazyVim | `Space gg` continua usando a raiz Git correta |

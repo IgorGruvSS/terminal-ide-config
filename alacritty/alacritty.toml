@@ -18,7 +18,7 @@ style = "SemiBold"
 [window]
 decorations = "None"
 dynamic_padding = false
-padding = { x = 2, y = 2 }
+padding = { x = 2, y = 0 }
 
 [scrolling]
 history = 50000

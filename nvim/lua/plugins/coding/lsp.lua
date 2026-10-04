@@ -10,6 +10,16 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		opts = function(_, opts)
+			-- Keep diagnostics and inferred types available without rendering them
+			-- inside the code. Use <leader>d for a diagnostic and K for LSP hover.
+			opts.diagnostics = vim.tbl_deep_extend("force", opts.diagnostics or {}, {
+				virtual_text = false,
+				virtual_lines = false,
+			})
+			opts.inlay_hints = vim.tbl_deep_extend("force", opts.inlay_hints or {}, {
+				enabled = false,
+			})
+
 			opts.servers = opts.servers or {}
 			opts.servers["*"] = vim.tbl_deep_extend("force", opts.servers["*"] or {}, {
 				keys = {

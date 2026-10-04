@@ -35,6 +35,11 @@ selecione SQL visualmente e use `Space S`; sem seleção, o mesmo atalho executa
 a query atual. Completion de tabelas e colunas aparece quando o Dadbod conhece
 o schema da conexão.
 
+O highlight combina Treesitter com as regras tradicionais de syntax do
+Neovim. Esse fallback mantém funções, tipos e identificadores destacados mesmo
+quando placeholders Python DB-API, como `%(ano)s`, interrompem o parsing
+estrutural de uma consulta PostgreSQL. Isso é independente de LSP.
+
 Nunca coloque URL, usuário ou senha em arquivo versionado. Duas opções seguras:
 
 ```bash

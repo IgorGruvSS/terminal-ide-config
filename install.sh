@@ -134,6 +134,13 @@ if ! command -v fd >/dev/null 2>&1 && ! command -v fdfind >/dev/null 2>&1; then
   missing_packages+=(fd-find)
 fi
 
+if ! command -v notify-send >/dev/null 2>&1; then
+  case "$ID" in
+    ubuntu | debian) missing_packages+=(libnotify-bin) ;;
+    fedora) missing_packages+=(libnotify) ;;
+  esac
+fi
+
 # Mason builds Go tools from their official modules and creates isolated Python
 # environments for Python tools. Package names differ between apt and dnf.
 if ! command -v go >/dev/null 2>&1; then
@@ -396,6 +403,12 @@ if ! grep -Fqx "$shell_line" "$zshrc" 2>/dev/null; then
   } >> "$zshrc"
 fi
 
+if command -v codex >/dev/null 2>&1; then
+  "$root_dir/bin/codex-notifications" install
+else
+  printf 'Codex notifications are ready after Codex is installed: codex-notifications install\n'
+fi
+
 mkdir -p "$desktop_dir"
 sed "s|@TERMINAL_IDE_CONFIG_DIR@|$root_dir|g" \
   "$root_dir/desktop/Alacritty.desktop.in" > "$desktop_file"
@@ -418,7 +431,7 @@ else
   printf 'Alacritty theme sync was not enabled: gdbus and systemctl are required.\n' >&2
 fi
 
-printf 'Open a new zsh session, then run: alacritty-tmux\n'
+printf 'Open a new zsh session, then run: alacritty-tmux or codex-tmux\n'
 printf 'Shift+Enter inserts a newline in supported TUIs and interactive zsh.\n'
 printf 'The KDE application entry now uses this repository configuration.\n'
 # Portuguese documentation uses a literal typographic apostrophe.
@@ -428,4 +441,5 @@ printf 'Neovim %s is available through: nvim\n' "$nvim_version"
 printf 'tree-sitter %s is available through: tree-sitter\n' "$tree_sitter_version"
 printf 'LazyGit %s is available through: lazygit\n' "$lazygit_version"
 printf 'StyLua is available through: stylua\n'
+printf 'Desktop alerts are available through: terminal-alert and notify-run\n'
 printf 'For Neovim plugins, run: nvim "+Lazy sync"\n'

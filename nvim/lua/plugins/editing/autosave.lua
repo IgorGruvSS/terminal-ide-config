@@ -5,13 +5,13 @@ return {
 
 		config = function()
 			require("auto-save").setup({
-				enabled = false,
+				enabled = true,
 				trigger_events = {
 					immediate_save = { "BufLeave", "FocusLost", "QuitPre", "VimSuspend" },
 					defer_save = { "InsertLeave", "TextChanged", "TextChangedI" },
 					cancel_deferred_save = { "InsertEnter" },
 				},
-				debounce_delay = 1500,
+				debounce_delay = 3000,
 			})
 
 			-- auto-save writes from inside another autocmd, so Neovim does not run

@@ -49,6 +49,9 @@ salvo dentro do Neovim, use `:ThemeSync`; `:ThemeCurrent` mostra o modo atual.
 
 ## Melhorias visuais
 
+A barra de status mantém as informações padrão do LazyVim, mas omite a branch
+Git para reduzir o espaço ocupado à esquerda.
+
 | Plugin | Efeito |
 | --- | --- |
 | `nvim-treesitter` | Highlight estrutural |

@@ -2,6 +2,14 @@
 .cache/
 .local/
 .state/
+/go/telemetry/
+
+# Generated on startup by tree-sitter-language-injection.nvim.
+nvim/after/queries/go/injections.scm
+nvim/after/queries/javascript/injections.scm
+nvim/after/queries/python/injections.scm
+nvim/after/queries/rust/injections.scm
+nvim/after/queries/typescript/injections.scm
 
 # Project-local LazyVim configuration may contain Dadbod connection URLs.
 .lazy.lua

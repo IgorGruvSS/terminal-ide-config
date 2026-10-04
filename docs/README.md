@@ -13,6 +13,7 @@
 ## Começar
 
 - [Instalação e primeira execução](getting-started/installation.md)
+- [Notificações de desktop](getting-started/notifications.md)
 
 ## Consulta rápida
 

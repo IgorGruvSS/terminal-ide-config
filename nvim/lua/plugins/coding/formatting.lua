@@ -17,6 +17,7 @@ return {
 				json = { "prettier" },
 				yaml = { "prettier" },
 				markdown = { "prettier" },
+				sql = { "sqlfluff" },
 				python = { "black" },
 			},
 			formatters = {
@@ -25,13 +26,19 @@ return {
 					stdin = false,
 					args = { "--write", "$FILENAME" },
 				},
+				sqlfluff = {
+					command = "sqlfluff",
+					-- Keep project and nested SQLFluff settings when formatting via stdin.
+					args = { "format", "--dialect", "postgres", "--stdin-filename", "$FILENAME", "-" },
+					stdin = true,
+				},
 			},
 		},
 	},
 	{
 		"mason-org/mason.nvim",
 		opts = {
-			ensure_installed = { "black", "debugpy", "prettier", "stylua" },
+			ensure_installed = { "black", "debugpy", "prettier", "sqlfluff", "stylua" },
 		},
 	},
 }

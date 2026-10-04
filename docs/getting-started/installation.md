@@ -76,6 +76,9 @@ nem outras configurações do Zsh.
 Ao final, a entrada de aplicativo do KDE aponta para o Alacritty configurado
 pelo repositório. Plugins e ferramentas do Neovim já foram sincronizados; use
 `alacritty-tmux` como ponto de entrada diário.
+Para manter as sessões do Codex em outra sessão persistente do tmux, use
+`codex-tmux` (sessão padrão `codex`). O comando `codex` pode ser iniciado dentro
+dela.
 
 O comando `stylua` é exposto pelo `bin/` do repositório e encaminha para a
 instalação correspondente do Mason. O instalador verifica esse launcher ao
@@ -87,6 +90,8 @@ O repositório continua sendo a única fonte das configurações. O instalador:
 
 - adiciona `bin/` ao `PATH` no `~/.zshrc`;
 - adiciona uma linha que carrega `shell/zsh/terminal-ide.zsh`;
+- quando o Codex CLI já estiver disponível, acrescenta apenas as chaves de
+  alerta ausentes em `~/.codex/config.toml`;
 - cria uma entrada de aplicativo KDE que chama o launcher do repositório;
 - cria apenas estado de execução ignorado dentro de `.local/`, `.cache/` e
   `.state/`.

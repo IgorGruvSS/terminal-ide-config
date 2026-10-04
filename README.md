@@ -24,6 +24,8 @@ LazyGit   → status, diff, stage, commit, branches, rebase e remotes
 
 `alacritty-tmux` é o ponto de entrada diário. Ele abre o Alacritty com a
 configuração deste repositório e conecta a uma sessão persistente do tmux.
+`codex-tmux` abre uma sessão tmux separada, chamada `codex` por padrão, para
+manter as sessões do Codex independentes das janelas de código.
 
 No KDE Plasma, o tema do Alacritty acompanha a preferência claro/escuro do
 sistema. O instalador habilita o serviço de usuário necessário. Para aplicá-lo
@@ -66,6 +68,7 @@ O processo completo, incluindo dependências e primeira inicialização, está n
 | Comando | Finalidade |
 | --- | --- |
 | `alacritty-tmux [sessão]` | Abrir o Alacritty e conectar/criar uma sessão tmux |
+| `codex-tmux [sessão]` | Abrir o Alacritty e conectar/criar uma sessão tmux do Codex (padrão: `codex`) |
 | `alacritty` | Usar o Alacritty com a configuração do repositório |
 | `tmux` | Usar o tmux com a configuração do repositório |
 | `nvim` | Usar o LazyVim e seu estado XDG autocontido |
@@ -75,12 +78,18 @@ O processo completo, incluindo dependências e primeira inicialização, está n
 | `alacritty-theme list` | Listar o perfil Catppuccin disponível |
 | `alacritty-theme set <light\|dark>` | Selecionar Catppuccin Latte ou Macchiato |
 | `alacritty-theme system` | Aplicar claro/escuro conforme a preferência do KDE |
+| `terminal-alert <título> <mensagem>` | Enviar uma notificação para a área de trabalho |
+| `notify-run <descrição> -- <comando>` | Executar um comando e avisar quando ele terminar |
+| `codex-notifications install` | Configurar os alertas do Codex sem substituir valores existentes |
 
 ## Documentação
 
 O [índice geral da documentação](docs/README.md) organiza o conteúdo por
 instalação, fluxo diário, Neovim e Git. Para uma consulta rápida, abra o
 [cheatsheet diário](docs/reference/cheatsheet.md).
+
+Os alertas para scripts e Codex estão descritos em
+[Notificações](docs/getting-started/notifications.md).
 
 ## Atualização
 
